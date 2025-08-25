@@ -1,0 +1,64 @@
+{ nacho 2024-10-28T00:26:30.864473800 }
+
+programa ejercicio2
+procesos
+  proceso preguntaPorCamino(ES ok:boolean)
+  comenzar
+    si(PosCa = 100)
+      ok:= V
+    sino
+      mover
+  fin
+  proceso depositoPapel(ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+      p:= p - 1
+  fin
+  proceso depositoAlPunto(ES p:numero)
+  variables 
+    ca,av:numero
+  comenzar
+    ca:= PosCa
+    av:= PosAv
+    BloquearEsquina(50,50)
+    Pos(50,50) 
+    depositoPapel(p)
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+  proceso trabajarPorPapel(ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p + 1
+      si(p = 5)
+        depositoAlPunto(p)        
+  fin  
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  {robot consumidor
+  comenzar
+  
+  fin}
+  robot productor
+  variables
+    ok:boolean
+    p:numero
+  comenzar
+    ok:= F
+    p:= 0
+    mientras (~ok) 
+      trabajarPorPapel(p)
+      preguntaPorCamino(ok)
+  fin
+variables
+  p1: productor
+  p2: productor
+comenzar
+  AsignarArea(p1, ciudad)
+  AsignarArea(p2, ciudad)
+  Iniciar(p1, 5,1)
+  Iniciar(p2, 10,1)  
+fin

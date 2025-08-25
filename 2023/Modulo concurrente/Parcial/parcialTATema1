@@ -1,0 +1,155 @@
+programa parcialTATema1
+procesos
+  proceso depositarAlPunto(E p:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    repetir p
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      si(HayPapelEnLaBolsa)
+        depositarPapel
+      Pos(av,ca)
+      LiberarEsquina(10,10)
+  fin
+  proceso enviarPerdedor(E idMax:numero)
+  variables
+    ok:boolean
+  comenzar
+    si (idMax = 1)
+      EnviarMensaje(V,p2)
+      EnviarMensaje(V,p3)
+    sino
+      si (idMax = 2)
+        EnviarMensaje(V,p1)
+        EnviarMensaje(V,p3)
+      sino
+        EnviarMensaje(V,p1)
+        EnviarMensaje(V,p2)
+  fin
+  proceso maximo(E cant1:numero;E cant2:numero;E cant3:numero;ES idMax:numero)
+  comenzar
+    si (cant1 > cant2) & (cant1 > cant3)
+      idMax:= 1
+    sino
+      si (cant2 > cant3) & (cant2 > cant3)
+        idMax:= 2
+      sino
+        idMax:= 3
+  fin
+  proceso volverAlPunto(E id:numero)
+  comenzar
+    si (id = 1)
+      Pos(1,1)
+    sino
+      si (id = 2)
+        Pos(2,1)
+    si(id=3)
+      Pos(3,1)
+  fin
+  proceso esperaPorCompa(E id:numero)
+  variables
+    ok:boolean
+  comenzar
+    si (id=1)
+      EnviarMensaje(V,p2)
+      EnviarMensaje(V,p3)
+      RecibirMensaje(ok,p2)
+      RecibirMensaje(ok,p3)
+    sino
+      si (id=2)
+        EnviarMensaje(V,p1)
+        EnviarMensaje(V,p3)
+        RecibirMensaje(ok,p1)
+        RecibirMensaje(ok,p3)
+      sino
+        EnviarMensaje(V,p1)
+        EnviarMensaje(V,p2)
+        RecibirMensaje(ok,p1)
+        RecibirMensaje(ok,p2)
+  fin
+  proceso juntarP (ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p+1
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,p1)
+    EnviarMensaje(2,p2)
+    EnviarMensaje(3,p3)
+  fin
+areas
+  areaT1: AreaP(1,1,1,10)
+  areaT2: AreaP(2,1,2,10)
+  areaT3: AreaP(3,1,3,10)
+  areaJ: AreaP(4,1,4,1)
+  areaPerdedor: AreaPC(10,10,10,10)
+robots
+  robot papelero
+  variables
+    id,p:numero
+    ok:boolean
+  comenzar
+    p:= 0
+    RecibirMensaje(id,j)
+    repetir 9
+      juntarP(p)
+      mover
+      esperaPorCompa(id)
+    juntarP(p)
+    volverAlPunto(id)    {<-- creo q es innecesario porque puede ser q entendi mal}
+    EnviarMensaje(id,j)    {en el enunciado}
+    EnviarMensaje(p,j)
+    RecibirMensaje(ok,j)
+    depositarAlPunto(p)
+    EnviarMensaje(ok,j)
+  fin
+  robot jefe
+  variables
+    id,cant,cant1,cant2,cant3,idMax:numero
+    ok:boolean
+  comenzar
+    cant1:= 0
+    cant2:= 0
+    cant3:= 0
+    enviarIDs
+    repetir 3
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(cant,p1)
+        cant1:= cant1 + cant
+      sino 
+        si(id = 2)
+          RecibirMensaje(cant,p2)
+          cant2:= cant2 + cant
+        sino
+          RecibirMensaje(cant,p3)
+          cant3:= cant3 + cant
+    maximo(cant1,cant2,cant3,idMax)
+    Informar(idMax)
+    enviarPerdedor(idMax)
+    repetir 2
+      RecibirMensaje(ok,*)
+  fin
+
+variables
+  p1,p2,p3:papelero
+  j:jefe
+comenzar
+  AsignarArea(p1,areaT1)
+  AsignarArea(p1,areaPerdedor)
+  AsignarArea(p2,areaT2)
+  AsignarArea(p2,areaPerdedor)
+  AsignarArea(p3,areaT3)
+  AsignarArea(p3,areaPerdedor)
+  AsignarArea(j,areaJ)
+  
+  Iniciar(p1,1,1)
+  Iniciar(p2,2,1)
+  Iniciar(p3,3,1)
+  Iniciar(j,4,1)
+fin

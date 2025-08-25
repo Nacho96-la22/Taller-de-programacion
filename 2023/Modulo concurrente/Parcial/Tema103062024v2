@@ -1,0 +1,110 @@
+programa Tema103062024v2
+procesos  
+  proceso verificacion
+  variables
+    ok1,ok2,ok3,juego:boolean
+    id:numero
+  comenzar
+    juego:= V
+    mientras(juego)
+      RecibirMensaje(ok1,b1)
+      RecibirMensaje(ok2,b2)
+      RecibirMensaje(ok3,b3)
+      si((ok1=F)&(ok2=F)&(ok3=F))
+        EnviarMensaje(V,b1)
+        EnviarMensaje(V,b2)
+        EnviarMensaje(V,b3)
+      sino
+        EnviarMensaje(F,b1)
+        EnviarMensaje(F,b2)
+        EnviarMensaje(F,b3)
+        juego:= F
+  fin
+  proceso buscaAlPunto(E av:numero;E ca:numero;E iniAv:numero; E iniCa:numero; ES gana:boolean)
+  comenzar
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      gana:= V
+    Pos(iniAv,iniCa)
+    LiberarEsquina(av,ca)
+  fin
+  proceso escondeFlorEnCuadrante
+  variables    
+    av,ca,iniAv,iniCa:numero
+  comenzar
+    iniAv:= PosAv
+    iniCa:= PosCa
+    Random(av,10,13)
+    Random(ca,10,13)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      Pos(av,ca)
+      depositarFlor
+      Pos(iniAv,iniCa)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,b1)
+    EnviarMensaje(2,b2)
+    EnviarMensaje(3,b3)
+  fin
+areas
+  areaB1: AreaP (1,1,1,1)
+  areaB2: AreaP (2,2,2,2)
+  areaB3: AreaP (3,3,3,3)
+  areaE: AreaP (4,4,4,4)
+  areaCuadrante: AreaPC (10,10,13,13)
+robots
+  robot buscadores
+  variables    
+    id:numero
+    juego,gana:boolean
+    av,ca,iniAv,iniCa:numero    
+  comenzar    
+    iniAv:= PosAv
+    iniCa:= PosCa    
+    RecibirMensaje(id,e)
+    gana:= F
+    juego:= V
+    mientras(juego<>F)
+      Random(av,10,13)
+      Random(ca,10,13)
+      buscaAlPunto(av,ca,iniAv,iniCa,gana) 
+      EnviarMensaje(gana,e)
+      RecibirMensaje(juego,e)
+    si(gana=V)
+      EnviarMensaje(id,e)
+  fin            
+  robot escondedor
+  variables
+    id,ganador:numero
+    gana:boolean
+    av,ca,iniAv,iniCa:numero
+  comenzar    
+    escondeFlorEnCuadrante
+    enviarIDs
+    verificacion
+    RecibirMensaje(id,*)
+    Informar('El_ganador_es_',id)
+  fin
+variables
+  b1,b2,b3: buscadores
+  e:escondedor
+comenzar
+  AsignarArea(b1, areaB1)
+  AsignarArea(b2, areaB2)
+  AsignarArea(b3, areaB3)
+  AsignarArea(e, areaE)
+  
+  AsignarArea(b1, areaCuadrante)
+  AsignarArea(b2, areaCuadrante)
+  AsignarArea(b3, areaCuadrante)
+  AsignarArea(e, areaCuadrante)
+  
+  Iniciar(b1, 1,1)
+  Iniciar(b2, 2,2)
+  Iniciar(b3, 3,3)
+  Iniciar(e, 4,4)
+fin

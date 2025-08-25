@@ -1,0 +1,106 @@
+programa ejercicio5
+procesos
+  proceso recibiendoIDs (ES id:numero; ES cant:numero; ES sigo:boolean)
+  comenzar
+    si (id = 1)
+      RecibirMensaje(sigo,j1)
+      RecibirMensaje(cant,j1)
+    sino
+      si (id = 2)
+        RecibirMensaje(sigo,j2)
+        RecibirMensaje(cant,j2)
+      sino
+        si (id = 3)
+          RecibirMensaje(sigo,j3)
+          RecibirMensaje(cant,j3)
+        sino
+          si (id = 4)
+            RecibirMensaje(sigo,j4)
+            RecibirMensaje(cant,j4)
+  fin
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+    EnviarMensaje(3,j3)
+    EnviarMensaje(4,j4)
+  fin
+areas
+  areaC: AreaP(11,10,11,10) {puse cualquier punto porque si no me pide el enunciado}
+  areaJ1: AreaP(4,1,4,100)
+  areaJ2: AreaP(6,1,6,100)
+  areaJ3: AreaP(8,1,8,100)
+  areaJ4: AreaP(10,1,10,100)
+  areaPapel: AreaPC(11,11,11,11)
+robots
+  robot jugador
+  variables
+    id, avAct, caAct, cantPaso:numero
+    HayPapel,sigo:boolean
+  comenzar
+    RecibirMensaje(id,c)
+    cantPaso:= 0
+    sigo:= V
+    mientras (sigo) & (PosCa < 100)
+      avAct:= PosAv
+      caAct:= PosCa
+      HayPapel:= V
+      BloquearEsquina(11,11)
+      Pos(11,11)
+      mientras (HayPapel) {temes que sacar este mientras, el enunciado pide que se junte de a un papel a la vez, osea cada robot tiene que poder juntar un papel,}
+        {BloquearEsquina(11,11)}
+        {Pos(11,11)}
+        si (HayPapelEnLaEsquina)
+          tomarPapel
+          Pos(avAct,caAct)
+          LiberarEsquina(11,11) {el liberar esquina ponelo afuera del si y del sino, porque se tiene que hacer siempre, ya que tenes el bloquear esquina antes el 'si', entonces necesitas que el liberar tambien este por afuera}
+          {depositarPapel}
+          {mover}
+        sino
+          HayPapel:= F
+          sigo:= F
+      {Pos(avAct,caAct)}
+      {LiberarEsquina(11,11)}
+      depositarPapel
+      mover
+      cantPaso:= cantPaso + 1    
+    EnviarMensaje(id,c)
+    EnviarMensaje(sigo,c)
+    EnviarMensaje(cantPaso,c)
+  fin
+  robot coordinador
+  variables
+    id,cant,idMax, cantMax:numero
+    sigo:boolean
+  comenzar
+    idMax:= 0
+    cantMax:= -1
+    enviarID
+    repetir 4
+      RecibirMensaje(id,*)
+      recibiendoIDs(id,cant,sigo)
+      si (cantMax < cant)
+        idMax:= id
+        cantMax:= cant
+    Informar('El_jugador_llego_mas_lejos_y_id_es_',idMax)
+    Informar('Tiene_la_cantidad_de_pasos_',cantMax)
+  fin
+variables
+  j1,j2,j3,j4:jugador
+  c:coordinador
+comenzar
+  AsignarArea(c,areaC)
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,areaPapel)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,areaPapel)
+  AsignarArea(j3,areaJ3)
+  AsignarArea(j3,areaPapel)
+  AsignarArea(j4,areaJ4)
+  AsignarArea(j4,areaPapel)
+  Iniciar(c,11,10)
+  Iniciar(j1,4,1)
+  Iniciar(j2,6,1)
+  Iniciar(j3,8,1)
+  Iniciar(j4,10,1)
+fin

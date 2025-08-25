@@ -1,0 +1,145 @@
+programa p
+procesos
+  proceso recolectar
+  comenzar
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+  fin
+  proceso cuadrado1
+  comenzar
+    repetir 2
+      repetir 4
+        recolectar
+        mover
+      derecha
+    repetir 3
+      recolectar
+      mover
+    BloquearEsquina(9,11)
+    mover
+    recolectar
+    derecha
+    mover
+    LiberarEsquina(9,11)
+    repetir 3
+      recolectar
+      mover
+  fin
+  proceso cuadrado2
+  comenzar
+    repetir 3
+      recolectar
+      mover
+    recolectar
+    BloquearEsquina(9,11)
+    mover
+    recolectar
+    derecha
+    mover
+    LiberarEsquina(9,11)
+    repetir 3
+      recolectar
+      mover
+    derecha
+    repetir 2
+      repetir 4
+        recolectar
+        mover
+      derecha
+  fin
+areas
+  area1: AreaPC(5,7,13,15)
+  area2: AreaPC(15,7,23,15)
+  area3: AreaPC(25,7,33,15)
+  areaf: AreaP(1,1,1,1)
+  areac: AreaP(2,2,2,2)
+  areac2:AreaP(3,3,3,3)
+robots
+  robot tipo1
+  variables
+    id: numero
+    ok1, ok2: boolean
+  comenzar
+    RecibirMensaje(id,fiscal)
+    ok1 := V
+    Pos(5,11)
+    cuadrado1
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(ok1,fiscal)
+    RecibirMensaje(ok2,fiscal)
+    si ok2
+      Pos(15,11)
+      derecha
+      cuadrado1
+      EnviarMensaje(id,fiscal)
+      EnviarMensaje(ok1,fiscal)
+      RecibirMensaje(ok2,fiscal)
+      si ok2 
+        Pos(25,11)
+        derecha
+        cuadrado1
+        EnviarMensaje(id,fiscal)
+  fin
+  robot tipo2
+  variables
+    id: numero
+    ok1, ok2: boolean
+  comenzar
+    RecibirMensaje(id,fiscal)
+    ok2 := V
+    Pos(9,7)
+    cuadrado2
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(ok2,fiscal)
+    RecibirMensaje(ok1,fiscal)
+    si ok1
+      Pos(19,7)
+      cuadrado2
+      EnviarMensaje(id,fiscal)
+      EnviarMensaje(ok2,fiscal)
+      RecibirMensaje(ok1,fiscal)
+      si ok1
+        Pos(29,7)
+        cuadrado2
+        EnviarMensaje(id,fiscal)
+  fin
+  robot jefe
+  variables
+    ok1, ok2: boolean
+    id, uno, dos, ganador: numero
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    repetir 3
+      RecibirMensaje(id,*)
+      si id = 1
+        Informar('Llego_primero_el_',id)
+        RecibirMensaje(id,r2)
+      sino
+        Informar('Llego_primero_el_',id)
+        RecibirMensaje(id,r1)
+      RecibirMensaje(ok1,r1)
+      RecibirMensaje(ok2,r2)
+      EnviarMensaje(ok2,r1)
+      EnviarMensaje(ok1,r2)
+  fin
+variables
+  r1: tipo1
+  r2: tipo2
+  fiscal: jefe
+comenzar
+  AsignarArea(r1,area1)
+  AsignarArea(r1,area2)
+  AsignarArea(r1,area3)
+  AsignarArea(r1,areac)
+  AsignarArea(r2,area1)
+  AsignarArea(r2,area2)
+  AsignarArea(r2,area3)
+  AsignarArea(r2,areac2)
+  AsignarArea(fiscal,areaf)
+  Iniciar(r1,2,2)
+  Iniciar(r2,3,3)
+  Iniciar(fiscal,1,1)
+fin

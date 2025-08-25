@@ -1,0 +1,112 @@
+programa parcialTFTema1
+procesos
+  proceso depositandoFlores(E f:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    repetir f
+      BloquearEsquina(20,20)
+      Pos(20,20)
+      si (HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(20,20)
+  fin
+  proceso recorrido (ES f:numero)
+  comenzar
+    repetir 9
+      juntarF(f)
+      mover
+    juntarF(f)      
+    derecha
+  fin
+  proceso juntarF (ES f:numero) 
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f+1
+  fin
+  proceso giro
+  comenzar
+    repetir 2
+      derecha
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,a1)
+    EnviarMensaje(2,a2)
+    EnviarMensaje(3,b1)
+    EnviarMensaje(4,b2)
+  fin
+areas
+  areaEA: AreaP(1,1,11,10)
+  areaEB: AreaP(13,1,23,10)
+  areaF: AreaP(1,30,1,30)
+  areaD: AreaPC(20,20,20,20)
+robots
+  robot PrimerEtapa
+  variables
+    id,f:numero
+  comenzar
+    f:= 0
+    RecibirMensaje(id,f)
+    repetir 2
+      recorrido (f) {Primer etapa}
+    si (id = 1)
+      EnviarMensaje(f,a2)
+    sino
+      si(id = 3)
+        EnviarMensaje(f,b2)
+    depositandoFlores(f)
+  fin
+  robot SegundoEtapa
+  variables
+    id,f,aux:numero
+    ok:boolean
+  comenzar
+    aux:= 0
+    RecibirMensaje(id,f)
+    si (id = 2)
+      RecibirMensaje(f,a1)
+    sino
+      RecibirMensaje(f,b1)
+    giro
+    repetir 2
+      recorrido(aux) {Segunda etapa}
+    depositandoFlores(f)
+    EnviarMensaje(f+aux,f)
+  fin
+  robot fiscal
+  variables
+    cantMax, cant:numero
+  comenzar
+    enviarIDs
+    repetir 2
+      RecibirMensaje(cant,*)
+      si (cantMax < cant)
+        cantMax:= cant
+    Informar('El_equipo_junto_mas_flores_',cantMax)
+  fin
+variables
+  a1,b1:PrimerEtapa
+  a2,b2:SegundoEtapa
+  f:fiscal
+comenzar
+  AsignarArea(a1,areaEA)
+  AsignarArea(a1,areaD)
+  AsignarArea(a2,areaEA)
+  AsignarArea(a2,areaD)
+  AsignarArea(b1,areaEB)
+  AsignarArea(b1,areaD)
+  AsignarArea(b2,areaEB)
+  AsignarArea(b2,areaD)
+  AsignarArea(f,areaF)
+  
+  Iniciar(a1,1,1)
+  Iniciar(a2,11,10)
+  Iniciar(b1,13,1)
+  Iniciar(b2,23,10)
+  Iniciar(f,1,30)
+fin

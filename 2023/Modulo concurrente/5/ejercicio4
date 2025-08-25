@@ -1,0 +1,116 @@
+programa ejercicio4
+procesos
+  proceso AtrabajarUbicacion(E ca:numero; E av:numero;E actAv:numero;E actCa:numero; ES flor:numero)
+  comenzar
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:= flor +1
+    Pos(actAv,actCa)
+    LiberarEsquina(av,ca)
+  fin
+  proceso finalizar
+  comenzar
+    EnviarMensaje(F,f1)
+    EnviarMensaje(F,f2)
+    EnviarMensaje(F,f3)  
+  fin
+  proceso mandoAlUbicacion(E av:numero; E ca:numero; E id:numero)
+  comenzar    
+    si(id=1)
+      EnviarMensaje(V,f1)
+      EnviarMensaje(av,f1)
+      EnviarMensaje(ca,f1)
+    sino
+      si(id=2)
+        EnviarMensaje(V,f2)
+        EnviarMensaje(av,f2)
+        EnviarMensaje(ca,f2)
+      sino
+        EnviarMensaje(V,f3)
+        EnviarMensaje(av,f3)
+        EnviarMensaje(ca,f3)
+  fin
+  proceso identificado
+  comenzar
+    EnviarMensaje(1,f1)
+    EnviarMensaje(2,f2)
+    EnviarMensaje(3,f3)
+  fin
+areas
+  f1Area: AreaP (1,1,1,1)
+  f2Area: AreaP (2,1,2,1)
+  f3Area: AreaP (3,1,3,1)
+  cuadrante: AreaPC(40,40,60,60)
+  depositoAlPunto: AreaPC(10,10,10,10)
+  fisArea: AreaP (4,1,4,1)
+robots
+  robot florero
+  variables
+    av,ca,id,flor:numero
+    actAv,actCa:numero
+    ok:boolean
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    flor:= 0
+    RecibirMensaje(id,fis)
+    RecibirMensaje(ok,fis)
+    mientras(ok)      
+      RecibirMensaje(av,fis)
+      RecibirMensaje(ca,fis)
+      AtrabajarUbicacion(ca,av,actAv,actCa,flor)
+      EnviarMensaje(V,fis)
+      RecibirMensaje(ok,fis)
+    si(HayFlorEnLaBolsa)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      repetir flor
+        depositarFlor
+      Pos(actAv,actCa)
+      LiberarEsquina(10,10)
+    EnviarMensaje(flor,fis)
+  fin
+  robot fiscalizador
+  variables
+    id,intento,av,ca:numero
+    flores,total:numero
+    ok:boolean
+  comenzar
+    total:= 0
+    intento:= 0
+    identificado
+    mientras(intento < 8)
+      Random(id,1,3)
+      Random(av,40,60)
+      Random(ca,40,60)
+      mandoAlUbicacion(av,ca,id)      
+      RecibirMensaje(ok,*)
+      intento:= intento + 1 
+    finalizar
+    repetir 3
+      RecibirMensaje(flores,*)
+      total:= total + flores
+    Informar('La_cantidad_total_de_flores_juntadas_',total)
+  fin
+variables
+  f1,f2,f3: florero
+  fis:fiscalizador
+comenzar
+  AsignarArea(f1, f1Area)
+  AsignarArea(f2, f2Area)
+  AsignarArea(f3, f3Area)
+  AsignarArea(fis, fisArea)
+  AsignarArea(f1, cuadrante)
+  AsignarArea(f2, cuadrante)
+  AsignarArea(f3, cuadrante)
+  AsignarArea(f1, depositoAlPunto)
+  AsignarArea(f2, depositoAlPunto)
+  AsignarArea(f3, depositoAlPunto)
+  AsignarArea(fis, depositoAlPunto)
+  Iniciar(f1, 1,1)
+  Iniciar(f2, 2,1)
+  Iniciar(f3, 3,1)
+  Iniciar(fis, 4,1)
+fin

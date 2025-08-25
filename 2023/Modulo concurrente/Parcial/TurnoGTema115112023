@@ -1,0 +1,129 @@
+programa TurnoGTema115112023
+procesos
+  proceso rejuntarEnPunto
+  variables
+    actAv,actCa:numero
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    Pos(99,99)
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+    Pos(actAv,actCa)
+  fin
+  proceso finalizaElTrabajo
+  comenzar
+    EnviarMensaje(F,p1)
+    EnviarMensaje(F,p2)
+    EnviarMensaje(F,p3)
+  fin
+  proceso terminaUnaEscalon
+  variables
+    ok:boolean
+  comenzar
+    RecibirMensaje(ok,p1)
+    RecibirMensaje(ok,p2)
+    RecibirMensaje(ok,p3)
+  fin
+  proceso ladoDeposito(ES papel:numero)
+  variables
+    actAv,actCa:numero
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    repetir papel
+      BloquearEsquina(99,99)
+      Pos(99,99)
+      si(HayPapelEnLaBolsa)
+        depositarPapel        
+      Pos(actAv,actCa)
+      LiberarEsquina(99,99)
+    papel:= 0
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso juntarPapeles(ES papel:numero; ES esq:numero)
+  comenzar
+    si(HayPapelEnLaEsquina)
+      mientras(HayPapelEnLaEsquina)
+        tomarPapel
+        papel:= papel +1
+      esq:= esq +1
+  fin
+  proceso escalon(E alto:numero; E ancho:numero; ES papel:numero; ES esq:numero)
+  comenzar
+    repetir alto
+      juntarPapeles(papel,esq)
+      mover
+    juntarPapeles(papel,esq)
+    ladoDeposito(papel)
+    derecha
+    repetir ancho
+      juntarPapeles(papel,esq)
+      mover
+    juntarPapeles(papel,esq)
+    izquierda
+    ladoDeposito(papel)    
+  fin
+  proceso Atrabajar
+  variables
+    inicia:boolean
+  comenzar
+    inicia:= V
+    EnviarMensaje(inicia,p1)
+    EnviarMensaje(inicia,p2)
+    EnviarMensaje(inicia,p3)
+  fin
+areas
+  ciudad: AreaC (1,1,100,100)
+robots
+  robot papeleros
+  variables
+    ok:boolean
+    id,papel,esq:numero
+    alto,ancho:numero
+  comenzar
+    papel:= 0
+    esq:= 0   
+    RecibirMensaje(ok,f)
+    mientras(ok)      
+      Random(alto,1,3)
+      Random(ancho,2,4)
+      escalon(alto,ancho,papel,esq)
+      EnviarMensaje(ok,f)
+      RecibirMensaje(ok,f)  
+    EnviarMensaje(esq,f)  
+  fin
+  robot fiscalizador
+  variables
+    id:numero
+    ok:boolean
+    esq,total:numero
+  comenzar
+    total:= 0
+    repetir 4
+      Atrabajar
+      terminaUnaEscalon
+    finalizaElTrabajo
+    rejuntarEnPunto
+    repetir 3
+      RecibirMensaje(esq,*)
+      total:= total + esq
+    Informar('La cantidad total de esquinas ',total)
+  fin
+variables
+  p1,p2,p3: papeleros
+  f:fiscalizador
+comenzar
+  AsignarArea(p1, ciudad)
+  AsignarArea(p2, ciudad)
+  AsignarArea(p3, ciudad)
+  AsignarArea(f, ciudad)
+  Iniciar(p1, 2,1)
+  Iniciar(p2, 32,1)
+  Iniciar(p3, 62,1)
+  Iniciar(f, 1,1)
+fin

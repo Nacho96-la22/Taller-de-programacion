@@ -1,0 +1,115 @@
+programa TurnoBTema1
+procesos
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:= flor +1
+  fin
+  proceso recorridoF1(E caF2:numero; E id:numero)
+  variables
+    flor:numero
+  comenzar
+    flor:= 0
+    repetir caF2 - 2
+      juntarFlores(flor)
+      mover
+    juntarFlores(flor)
+    BloquearEsquina(6,caF2)
+    mover
+    EnviarMensaje(id,fiscal)
+    juntarFlores(flor)
+    mover
+    LiberarEsquina(6,caF2)
+    repetir (60 - caF2)
+      juntarFlores(flor)
+      mover
+    juntarFlores(flor)
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(flor,fiscal)
+  fin
+  proceso recorridoF2(E caF2:numero; E id:numero)
+  variables
+    flor:numero
+  comenzar
+    flor:= 0
+    repetir 4
+      juntarFlores(flor)
+      mover
+    juntarFlores(flor)
+    BloquearEsquina(6,caF2)    
+    mover
+    EnviarMensaje(id,fiscal)
+    juntarFlores(flor)
+    mover
+    LiberarEsquina(6,caF2)
+    repetir 54
+      juntarFlores(flor)
+      mover
+    juntarFlores(flor)
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(flor,fiscal)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,f1)
+    EnviarMensaje(2,f2)
+  fin
+areas
+  areaF1: AreaP(6,1,6,1)
+  areaF2: AreaP(1,2,1,50)
+  area: AreaPC(2,2,61,61)
+  areaFiscal: AreaP(100,100,100,100)
+robots
+  robot floreros
+  variables
+    id:numero
+    iniAv,caF2:numero
+  comenzar
+    RecibirMensaje(id,fiscal)
+    RecibirMensaje(caF2,fiscal)
+    si(id=1)
+      recorridoF1(caF2,id)
+    sino
+      iniAv:= PosAv
+      Pos(iniAv,caF2)
+      derecha
+      recorridoF2(caF2,id)
+  fin
+  robot fiscalizador
+  variables
+    florPriLlego,flor:numero
+    primeroLlego,id:numero
+    caF2:numero
+  comenzar
+    enviarIDs
+    Random(caF2,2,50)
+    EnviarMensaje(caF2,f1)
+    EnviarMensaje(caF2,f2)
+    RecibirMensaje(primeroLlego,*)
+    RecibirMensaje(id,*)
+    repetir 2
+      RecibirMensaje(id,*)
+      si(id=1)
+        RecibirMensaje(flor,f1)
+      sino
+        RecibirMensaje(flor,f2)
+      si(primeroLlego = id)
+        florPriLlego:= flor
+    Informar('Llego primero a la esquina de cruce el id ',primeroLlego)
+    Informar('Juntó flores en todo recorrido ',florPriLlego)
+  fin
+variables
+  f1,f2: floreros
+  fiscal: fiscalizador
+comenzar
+  AsignarArea(f1, areaF1)
+  AsignarArea(f1, area)
+  AsignarArea(f2, area)
+  AsignarArea(f2, areaF2)
+  AsignarArea(fiscal, areaFiscal)
+
+  Iniciar(f1, 6,1)
+  Iniciar(f2, 1,2)
+  Iniciar(fiscal, 100,100)
+fin

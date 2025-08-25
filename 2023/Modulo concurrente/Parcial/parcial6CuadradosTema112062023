@@ -1,0 +1,117 @@
+programa parcial6CuadradosTema112062023
+{Al final, lo uso con 4x4 porque el enunciado esta mal por calculo}
+procesos
+  proceso recolectar
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso cuadrado
+  comenzar
+    repetir 3
+      recolectar
+      mover
+    BloquearEsquina(PosAv,PosCa+1)
+    recolectar
+    mover
+    derecha
+    recolectar
+    mover
+    LiberarEsquina(PosAv-1,PosCa)
+    repetir 3
+      recolectar
+      mover
+    derecha
+    repetir 3
+      recolectar 
+      mover   
+    BloquearEsquina(PosAv,PosCa-1) 
+    recolectar
+    mover
+    derecha
+    recolectar
+    mover
+    LiberarEsquina(PosAv+1,PosCa)
+    repetir 3
+      recolectar
+      mover
+    derecha
+  fin
+  proceso localidad (E id:numero)
+  comenzar
+    si (id = 1)
+      Pos(5,11)
+    sino
+      si (id = 2)
+        Pos(9,7)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+  fin
+areas      
+  areaJ1: AreaP(2,2,2,2)
+  areaJ2: AreaP(3,3,3,3)
+  areaRF: AreaP(1,1,1,1)
+  cuadrado1: AreaPC(5,7,13,15) 
+  cuadrado2: AreaPC(14,7,22,15)
+  cuadrado3: AreaPC(23,7,31,15)
+robots
+  robot jugadores
+  variables
+    id,avAct,caAct:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,rf)
+    localidad(id) {donde podemos correr la posicion y tambien quienes somos}
+    repetir 2
+      cuadrado
+      avAct:= PosAv+8
+      caAct:= PosCa
+      Pos(avAct+1,caAct) {reposicionarse}
+      EnviarMensaje(id,rf) {avisa al fiscal por quien soy}
+      EnviarMensaje(V,rf) {llego primero y deberia espera a otro jugador}
+      RecibirMensaje(ok,rf) {me reciben que podemos corremos al mismo tiempo}
+    cuadrado
+    EnviarMensaje(id,rf)
+    EnviarMensaje(V,rf)
+  fin
+  robot fiscal
+  variables
+    id:numero
+    ok:boolean
+  comenzar
+    enviarIDs
+    repetir 3
+      RecibirMensaje(id,*)   
+      repetir 2 {los jugadores avisan que llegan temprano y espera por los demas}
+        RecibirMensaje(ok,*)
+      EnviarMensaje(V,j1) {La fiscal se decide q corren al mismo tiempo}
+      EnviarMensaje(V,j2)
+      si (id = 1) {quien llego el primero jugador}
+        Informar('Llego_primero_id_',id)
+        RecibirMensaje(id,j2)       
+      sino
+        Informar('Llego_primero_id_',id)
+        RecibirMensaje(id,j1)
+  fin
+variables
+  j1,j2:jugadores
+  rf:fiscal
+comenzar
+  AsignarArea(rf,areaRF)
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,cuadrado1)
+  AsignarArea(j1,cuadrado2)
+  AsignarArea(j1,cuadrado3)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,cuadrado1)
+  AsignarArea(j2,cuadrado2)
+  AsignarArea(j2,cuadrado3)
+  Iniciar(j1,2,2)
+  Iniciar(j2,3,3)
+  Iniciar(rf,1,1)
+fin

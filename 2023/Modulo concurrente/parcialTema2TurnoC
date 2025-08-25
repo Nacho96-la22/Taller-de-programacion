@@ -1,0 +1,36 @@
+programa parcial
+areas
+  c1:AreaP(1,1,1,1)
+  c2:AreaP(8,1,8,1)
+  c3:AreaP(15,1,15,1)
+  c4:AreaP(51,1,51,1)
+robots
+  robot trabajador
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,j1)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  robot jefe
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+  fin
+variables
+  r1:trabajador
+  r2:trabajador
+  r3:trabajador
+  j1:jefe
+comenzar
+  AsignarArea(r1,c1)
+  AsignarArea(r2,c2)
+  AsignarArea(r3,c3)
+  AsignarArea(j1,c4)
+  Iniciar(r1,1,1)
+  Iniciar(r2,8,1)
+  Iniciar(r3,15,1)
+  Iniciar(j1,51,1)
+fin

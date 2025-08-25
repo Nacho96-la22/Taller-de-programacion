@@ -1,0 +1,92 @@
+programa ejercicio3
+procesos
+  proceso vaciarLaBolsa(ES flor:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    Pos(av,ca)
+    LiberarEsquina(10,10)
+  fin
+  proceso recorrido
+  variables
+    contEsq,flor:numero
+  comenzar
+    contEsq:= 0
+    flor:= 0
+    mientras(PosAv < 100)
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        flor:= flor +1
+        si(flor = 10)
+          vaciarLaBolsa(flor)
+          EnviarMensaje(V,c)
+      contEsq:= contEsq + 1
+      si(contEsq = 5)
+        vaciarLaBolsa(flor)
+        EnviarMensaje(V,c)
+        contEsq:= 0
+      mover
+  fin
+areas
+  r1Area: AreaP (1,3,100,3)
+  r2Area: AreaP (1,4,100,4)
+  cArea: AreaP (1,5,1,5)
+  depositoLocalizado: AreaPC (10,10,10,10)
+robots
+  robot recolectores
+  variables
+    contEsq:numero
+  comenzar
+    EnviarMensaje(V,c)
+    derecha    
+    recorrido
+    EnviarMensaje(F,c)
+  fin
+  robot casechador
+  variables
+    av,ca,cant:numero
+    ok1,ok2,cosechar:boolean
+  comenzar
+    RecibirMensaje(ok1,r1)
+    RecibirMensaje(ok2,r2)
+    cant:= 0
+    av:= PosAv
+    ca:= PosCa
+    mientras(ok1 | ok2)
+      RecibirMensaje(cosechar,*)
+      si(cosechar = V)
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        mientras(HayFlorEnLaEsquina)
+          tomarFlor
+          cant:= cant+1
+        Pos(av,ca)
+        LiberarEsquina(10,10)
+      sino
+        si(ok1=V)
+          ok1:=F
+        sino
+          si(ok2=V)
+            ok2:=F
+    Informar('La_cantidad_de_flores_recolectadas_',cant)        
+  fin
+variables
+  r1,r2: recolectores
+  c: casechador
+comenzar
+  AsignarArea(r1, r1Area)
+  AsignarArea(r2, r2Area)
+  AsignarArea(c, cArea)
+  AsignarArea(r1, depositoLocalizado)
+  AsignarArea(r2, depositoLocalizado)
+  AsignarArea(c, depositoLocalizado)
+  Iniciar(r1, 1,3)
+  Iniciar(r2, 1,4)
+  Iniciar(c, 1,5)
+fin

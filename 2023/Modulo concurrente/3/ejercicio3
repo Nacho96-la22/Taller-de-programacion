@@ -1,0 +1,107 @@
+programa ejericio3  
+procesos
+  proceso maximo (E id:numero; E cant:numero; ES ganador:numero; ES max:numero)
+  comenzar
+    si(cant > max)
+      max:= cant
+      ganador:= id
+  fin
+  proceso mandarCuadrante
+  variables
+    ca,av:numero
+  comenzar
+    Random(av,2,10)
+    Random(ca,2,10)
+    EnviarMensaje(av,j1)
+    EnviarMensaje(ca,j1)
+    EnviarMensaje(av,j2)
+    EnviarMensaje(ca,j2)
+    EnviarMensaje(av,j3)
+    EnviarMensaje(ca,j3)
+    EnviarMensaje(av,j4)
+    EnviarMensaje(ca,j4)
+  fin
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+    EnviarMensaje(3,j3)
+    EnviarMensaje(4,j4)
+  fin
+areas
+  puntoJefe: AreaP(1,1,1,1)
+  puntoJ1: AreaP(2,1,2,1) {Estas areas deben ser privadas pues son solo de 1 robot} 
+  puntoJ2: AreaP(3,1,3,1) {}
+  puntoJ3: AreaP(4,1,4,1) {}
+  puntoJ4: AreaP(5,1,5,1) {}
+  cuadrante: AreaPC(2,2,10,10)
+robots
+  robot jugador
+  variables
+    id,ca,av,cant:numero
+    avActual,caActual:numero
+    HayFlor:boolean
+  comenzar
+    avActual:= PosAv
+    caActual:= PosCa
+    cant:= 0
+    RecibirMensaje(id,fiscal)
+    RecibirMensaje(av,fiscal)
+    RecibirMensaje(ca,fiscal)
+    HayFlor:= V
+    mientras(HayFlor)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      si(HayFlorEnLaEsquina)
+        tomarFlor
+        cant:= cant + 1
+      sino
+        HayFlor:= F
+      Pos(avActual,caActual)
+      LiberarEsquina(av,ca)
+    EnviarMensaje(id,fiscal)
+    EnviarMensaje(cant,fiscal)
+  fin
+  robot jefe
+  variables
+    id,cant,ganador,max:numero
+  comenzar 
+    max:= -1
+    enviarID
+    mandarCuadrante
+    repetir 4
+      RecibirMensaje(id,*)
+      si(id=1)
+        RecibirMensaje(cant,j1)
+      sino
+        si(id=2)
+          RecibirMensaje(cant,j2)
+        sino
+          si(id=3)
+            RecibirMensaje(cant,j3)
+          sino
+            si (id=4)
+              RecibirMensaje(cant,j4)
+      maximo(id,cant,ganador,max)
+    Informar('Ha_logrado_el_jugador_',ganador)
+    Informar('La_cantidad_tiene_',max)
+  fin
+variables
+  j1,j2,j3,j4:jugador
+  fiscal:jefe
+comenzar
+  AsignarArea(j1,puntoJ1)
+  AsignarArea(j1,cuadrante)
+  AsignarArea(j2,puntoJ2)
+  AsignarArea(j2,cuadrante)
+  AsignarArea(j3,puntoJ3)
+  AsignarArea(j3,cuadrante)
+  AsignarArea(j4,puntoJ4)
+  AsignarArea(j4,cuadrante)
+  AsignarArea(fiscal,puntoJefe)
+  Iniciar(j1,2,1)
+  Iniciar(j2,3,1)
+  Iniciar(j3,4,1)
+  Iniciar(j4,5,1)
+  Iniciar(fiscal,1,1)
+fin

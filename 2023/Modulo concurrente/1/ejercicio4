@@ -1,0 +1,69 @@
+programa ejercicio4
+procesos
+  proceso juntarFlor
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapel
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso siguienteAvP
+  comenzar
+    repetir 99
+      mover
+      juntarPapel
+    juntarPapel
+  fin
+  proceso limpiarPapel
+  comenzar
+    repetir 24
+      siguienteAvP
+      Pos(PosAv+1,1)
+    siguienteAvP
+  fin
+  proceso siguienteAvF
+  comenzar
+    repetir 99
+      mover
+      juntarFlor
+    juntarFlor
+  fin
+  proceso limpiarFlor
+  comenzar
+    repetir 24
+      siguienteAvF
+      Pos(PosAv+1,1)
+    siguienteAvF
+  fin
+areas
+  c1: AreaPC(1,1,25,100)
+  c2: AreaPC(26,1,50,100)
+  c3: AreaPC(51,1,75,100)
+  c4: AreaPC(76,1,100,100)
+robots
+  robot florero
+  comenzar
+    limpiarFlor
+    Pos(51,1)
+    limpiarFlor
+  fin
+  robot papelero
+  comenzar
+    limpiarPapel
+    Pos(76,1)
+    limpiarPapel
+  fin
+variables
+  r1:florero
+  r2:papelero
+comenzar
+  AsignarArea(r1,c1)
+  AsignarArea(r2,c2)
+  AsignarArea(r1,c3)
+  AsignarArea(r2,c4)
+  Iniciar(r1,1,1)
+  Iniciar(r2,26,1)
+fin

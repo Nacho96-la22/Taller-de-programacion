@@ -1,0 +1,147 @@
+programa parcialRectangulo11042023
+procesos
+  proceso maximo(E f:numero; E id:numero; ES maxFlor:numero; ES maxID:numero)
+  comenzar
+    si (maxFlor < f)
+      maxFlor:= f
+      maxID:= id
+  fin
+  proceso depositandoAlPunto(E f:numero)
+  variables
+    ca,av:numero
+  comenzar
+    repetir f
+      av:= PosAv
+      ca:= PosCa
+      BloquearEsquina(25,25)
+      Pos(25,25)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(25,25)   
+  fin
+  proceso esperaPorCompa(E id:numero)
+  variables  
+    ok:boolean
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V,r2)
+      EnviarMensaje(V,r3)
+      RecibirMensaje(ok,r2)
+      RecibirMensaje(ok,r3)
+    sino
+      si (id = 2)
+        EnviarMensaje(V,r1)
+        EnviarMensaje(V,r3)
+        RecibirMensaje(ok,r1)
+        RecibirMensaje(ok,r3)
+      sino
+        EnviarMensaje(V,r1)
+        EnviarMensaje(V,r2)
+        RecibirMensaje(ok,r1)
+        RecibirMensaje(ok,r2)
+  fin
+  proceso juntarF(ES f:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f + 1
+  fin
+  proceso recorridoAncho(E ancho:numero; ES f:numero)
+  comenzar
+    repetir ancho
+      juntarF(f)
+      mover
+    derecha
+  fin
+  proceso recorridoAlto (E alto:numero; ES f:numero)
+  comenzar
+    repetir alto
+      juntarF(f)
+      mover
+    derecha
+  fin
+  proceso rectangulo
+  variables
+    alto,ancho:numero
+  comenzar
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto,r1)
+    EnviarMensaje(ancho,r1)
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto,r2)
+    EnviarMensaje(ancho,r2)
+    Random(alto,1,10)
+    Random(ancho,1,5)
+    EnviarMensaje(alto,r3)
+    EnviarMensaje(ancho,r3)
+  fin
+  proceso enviarIDs
+  comenzar 
+    EnviarMensaje(1,r1) 
+    EnviarMensaje(2,r2) 
+    EnviarMensaje(3,r3) 
+  fin  
+areas 
+  areaR1: AreaP(1,1,6,11) 
+  areaR2: AreaP(7,1,12,11) 
+  areaR3: AreaP(13,1,18,11) 
+  areaC: AreaP(24,24,24,24) 
+  areaF: AreaPC(25,25,25,25)
+robots 
+  robot recolectador 
+  variables 
+    id,alto,ancho,f:numero 
+  comenzar 
+    f:= 0 
+    RecibirMensaje(id,c) 
+    RecibirMensaje(alto,c)   
+    RecibirMensaje(ancho,c) 
+    repetir 2 
+      recorridoAlto(alto,f) 
+      recorridoAncho(ancho,f) 
+    esperaPorCompa(id)
+    depositandoAlPunto(f)
+    EnviarMensaje(id,c)
+    EnviarMensaje(f,c)
+  fin 
+  robot coordinador 
+  variables
+    maxID,maxFlor,id,f:numero
+  comenzar 
+    maxFlor:= -1
+    maxID:= 0
+    enviarIDs 
+    rectangulo 
+    repetir 3
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(f,r1)
+        maximo(f,id,maxFlor,maxID)
+      sino
+        si (id = 2)
+          RecibirMensaje(f,r2)
+          maximo(f,id,maxFlor,maxID)
+        sino
+          RecibirMensaje(f,r3)
+          maximo(f,id,maxFlor,maxID)
+    Informar('Recolecto_mas_flores_que_fue_el_id_es_',maxID)
+    Informar('La_cantidad_de_flores_tiene_',maxFlor)
+  fin 
+variables 
+  r1,r2,r3:recolectador 
+  c:coordinador 
+comenzar 
+  AsignarArea(r1,areaR1) 
+  AsignarArea(r1,areaF)
+  AsignarArea(r2,areaR2)
+  AsignarArea(r2,areaF)
+  AsignarArea(r3,areaR3) 
+  AsignarArea(r3,areaF)
+  AsignarArea(c,areaC) 
+  Iniciar(r1,1,1) 
+  Iniciar(r2,7,1) 
+  Iniciar(r3,13,1) 
+  Iniciar(c,24,24) 
+fin 

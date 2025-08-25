@@ -1,0 +1,81 @@
+programa ejercicio2
+procesos
+  proceso juntarFyP(ES f:numero; ES p:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:=f+1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      p:=p+1
+  fin
+  proceso limpiarBolsa
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor  
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso escalon(ES f:numero; ES p:numero; E alto:numero)
+  comenzar
+    repetir (alto)
+      mover
+      juntarFyP(f,p)
+    derecha
+    mover
+    juntarFyP(f,p)
+    repetir 3
+      derecha
+  fin
+  proceso preguntaFyP (E f:numero;E p:numero;ES cant:numero)
+  comenzar
+    si(f>p)
+      cant:=cant+1
+  fin
+areas
+  ciudad: AreaPC(2,1,30,30)
+  privada: AreaP(1,1,1,1)
+robots
+  robot tipoN
+  variables
+    f,p,alto,cant:numero
+  comenzar
+    cant:=0
+    f:=0
+    p:=0
+    juntarFyP(f,p)
+    repetir 4
+      Random(alto,1,5)
+      escalon(f,p,alto) 
+      preguntaFyP(f,p,cant)
+      f:=0
+      p:=0
+      limpiarBolsa
+    Informar(cant)
+    EnviarMensaje(cant,jefe)
+  fin
+  robot tipoJefe
+  variables
+    cant,suma:numero
+  comenzar
+    suma:=0
+    repetir 3
+      RecibirMensaje(cant,*)
+      suma:=suma+cant
+    Informar(suma)
+  fin  
+variables
+  robot1:tipoN
+  robot2:tipoN
+  robot3:tipoN
+  jefe:tipoJefe
+comenzar
+  AsignarArea(jefe,privada)
+  AsignarArea(robot1,ciudad)
+  AsignarArea(robot2,ciudad)
+  AsignarArea(robot3,ciudad)
+  Iniciar(jefe,1,1)
+  Iniciar(robot1,2,1)
+  Iniciar(robot2,7,1)
+  Iniciar(robot3,12,1)
+fin

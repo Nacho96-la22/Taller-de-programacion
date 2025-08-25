@@ -1,0 +1,149 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un código de ejemplo que implementa un
+proceso que recibe un número de avenida como parámetro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejercicio1
+procesos
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:= flor+1
+  fin
+  proceso juntarPapeles(ES papel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papel:= papel+1
+  fin
+  proceso recorridoCa(ES papel:numero)
+  variables
+    ca:numero
+  comenzar
+    repetir 96
+      juntarPapeles(papel)
+      mover
+    ca:= PosCa
+    juntarPapeles(papel)    
+    BloquearEsquina(3,ca)
+    mover
+    juntarPapeles(papel)    
+    BloquearEsquina(2,ca)
+    mover
+    LiberarEsquina(3,ca)
+    juntarPapeles(papel)   
+    mover
+    LiberarEsquina(2,ca)
+    juntarPapeles(papel)
+  fin
+  proceso recorridoAv(ES flor:numero)
+  variables
+    av:numero
+  comenzar
+    repetir 96
+      juntarFlores(flor)
+      mover
+    av:= PosAv
+    juntarFlores(flor)
+    BloquearEsquina(av,98)
+    mover
+    juntarFlores(flor)
+    BloquearEsquina(av,99)
+    mover
+    LiberarEsquina(av,98)
+    juntarFlores(flor)
+    mover
+    LiberarEsquina(av,99)
+    juntarFlores(flor)
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha  
+  fin
+  proceso mandoIDs
+  comenzar
+    EnviarMensaje(2,r1)
+    EnviarMensaje(3,r2)
+    EnviarMensaje(98,a1)
+    EnviarMensaje(99,a2)  
+  fin
+areas
+  fiscalArea: AreaP(50,50,50,50)
+  r1Area: AreaP(2,1,2,100)
+  r2Area: AreaP(3,1,3,100)
+  a1Area: AreaP(1,98,100,98)
+  a2Area: AreaP(1,99,100,99)
+robots
+  robot rojo
+  variables 
+    id,flor:numero
+  comenzar
+    RecibirMensaje(id,f)
+    RecibirMensaje(flor,f)
+    flor:= 0
+    recorridoAv(flor)
+    EnviarMensaje(id,f)
+    EnviarMensaje(flor,f)
+  fin
+  robot azul
+  variables
+    id,papel:numero
+  comenzar
+    RecibirMensaje(id,f)
+    RecibirMensaje(papel,f)
+    papel:=0
+    izquierda
+    recorridoCa(papel)
+    EnviarMensaje(id,f)
+    EnviarMensaje(papel,f)
+  fin
+  robot fiscalizador
+  variables
+    cantR,cantA,id,aux:numero
+  comenzar
+    cantR:= 0
+    cantA:= 0
+    mandoIDs
+    EnviarMensaje(cantR,r1)
+    EnviarMensaje(cantR,r2)
+    EnviarMensaje(cantA,a1)
+    EnviarMensaje(cantA,a2)
+    repetir 4
+      RecibirMensaje(id,*)
+      si(id=2)
+        RecibirMensaje(aux,r1)
+        cantR:= cantR + aux
+      sino
+        si(id=3)
+          RecibirMensaje(aux,r2)
+          cantR:= cantR + aux
+        sino
+          si(id=98)
+            RecibirMensaje(aux,a1)
+            cantA:= cantA + aux
+          sino
+            RecibirMensaje(aux,a2)
+            cantA:= cantA + aux
+    si(cantA < cantR)
+      Informar('El_ganador_es_el_equipo_rojo',cantR)
+    sino
+      Informar('El_ganador_es_el_equipo_azul',cantA)
+  fin
+variables
+  f: fiscalizador
+  r1,r2: rojo
+  a1,a2: azul
+comenzar
+  AsignarArea(f, fiscalArea)
+  AsignarArea(r1, r1Area)
+  AsignarArea(r2, r2Area)
+  AsignarArea(a1, a1Area)
+  AsignarArea(a2, a2Area)
+  Iniciar(f, 50,50)
+  Iniciar(r1, 2,1)
+  Iniciar(r2, 3,1)
+  Iniciar(a1, 100,98)
+  Iniciar(a2, 100,99)
+fin

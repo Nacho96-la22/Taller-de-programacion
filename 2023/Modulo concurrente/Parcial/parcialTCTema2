@@ -1,0 +1,95 @@
+programa parcialTCTema2
+procesos
+  proceso depositarAlPunto(E avAct:numero; E caAct:numero; E f:numero)
+  comenzar 
+    repetir f {Esto es obligado por concurrente}
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      depositarFlor
+      Pos(avAct,caAct)
+      LiberarEsquina(50,50)
+  fin
+  proceso esperaPorUnCompa(E id:numero; E avAct:numero; E caAct:numero)
+  variables
+    ok:boolean
+  comenzar
+    si(id = 1)
+      EnviarMensaje(V,j2)
+      EnviarMensaje(V,j3)
+      RecibirMensaje(ok,*)
+      RecibirMensaje(ok,*)
+    sino
+      si (id = 2)
+        EnviarMensaje(V,j1)
+        EnviarMensaje(V,j3)
+        RecibirMensaje(ok,*)
+        RecibirMensaje(ok,*)
+      sino
+        EnviarMensaje(V,j1)
+        EnviarMensaje(V,j2)
+        RecibirMensaje(ok,*)
+        RecibirMensaje(ok,*)
+  fin
+  proceso juntarFlores(ES f:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f+1
+  fin
+  proceso cuadrante (E alto:numero; ES f:numero)
+  comenzar
+    repetir 4
+      repetir alto
+        mover
+        juntarFlores(f)
+      derecha
+  fin
+{-------------------------------------------}
+areas
+  areaJ1: AreaP(1,1,6,30)
+  areaJ2: AreaP(8,1,13,30)
+  areaJ3: AreaP(15,1,20,30)
+  areaC: AreaP(51,1,51,1)
+  areaFlor: AreaPC(50,50,50,50)
+robots
+  robot jugador
+  variables
+    id,alto,caAct,avAct, f:numero
+  comenzar
+    f:= 0
+    RecibirMensaje(id,c)
+    avAct:= PosAv
+    caAct:= PosCa
+    repetir 5
+      Random(alto,1,5)
+      cuadrante(alto,f)
+      caAct:= caAct+alto+1
+      Pos(avAct,caAct)
+      esperaPorUnCompa(id, avAct, caAct)
+    depositarAlPunto(avAct,caAct, f)
+    Informar('Termine',f)
+  fin
+  robot coordinador
+  variables
+    id:numero
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+    EnviarMensaje(3,j3)
+  fin
+variables
+  j1,j2,j3:jugador
+  c:coordinador
+comenzar
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,areaFlor)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,areaFlor)
+  AsignarArea(j3,areaJ3)
+  AsignarArea(j3,areaFlor)
+  AsignarArea(c,areaC)
+  Iniciar (j1,1,1)
+  Iniciar(j2,8,1)
+  Iniciar(j3,15,1)
+  Iniciar(c,51,1)
+fin

@@ -1,0 +1,118 @@
+programa ejercicio4
+procesos
+  proceso juntar(ES total:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      total:=total+1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      total:=total+1
+  fin
+  proceso ingresarArea(E alto:numero;E ancho:numero;ES total:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    Pos(alto,ancho)
+    juntar(total)
+    Pos(av,ca)
+  fin
+  
+  proceso enviaGanador(E IDmax:numero)
+  comenzar
+    EnviarMensaje(IDmax,r1)
+    EnviarMensaje(IDmax,r2)
+  fin
+  proceso recibo(ES cant:numero;E ID:numero)
+  comenzar
+    si(ID=1)
+      RecibirMensaje(cant,r1)
+    sino
+      si(ID=2)
+        RecibirMensaje(cant,r2)
+  fin
+  proceso finalizarRobots
+  comenzar
+    EnviarMensaje(F,r1)
+    EnviarMensaje(F,r2)
+  fin
+  proceso enviarRandom (E rob:numero)
+  comenzar
+    si(rob=1)
+      EnviarMensaje(V,r1)
+    sino
+      si(rob=2)
+        EnviarMensaje(V,r2)
+  fin
+  proceso enviaID
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+  fin
+areas
+  areaFiscal:AreaP(1,1,1,1)
+  areaRobot1:AreaP(25,1,25,1)
+  areaRobot2:AreaP(30,1,30,1)
+  areaRecolectores:AreaPC(25,25,75,75)
+robots
+  robot recolectores
+  variables
+    ok:boolean
+    id,total,ganador:numero
+    ancho,alto:numero
+  comenzar
+    total:= 0
+    RecibirMensaje(id,rFiscal)
+    RecibirMensaje(ok,rFiscal)
+    mientras(ok)
+      Random(ancho,25,75)
+      Random(alto,25,75)
+      ingresarArea(alto,ancho,total)
+      EnviarMensaje(F,rFiscal)
+      RecibirMensaje(ok,rFiscal)
+    EnviarMensaje(id,rFiscal)
+    Informar(total)
+    EnviarMensaje(total,rFiscal)
+    RecibirMensaje(ganador,rFiscal)
+    si(ganador=id)
+      Pos(50,50)
+  fin
+  robot fiscal
+  variables
+    ok:boolean
+    cant, ID,rob:numero
+    max, IDmax:numero
+  comenzar
+    enviaID
+    repetir 5
+      Random(rob,1,2)
+      enviarRandom(rob)
+      RecibirMensaje(ok,*)
+    finalizarRobots
+    max:=0
+    IDmax:=0
+    repetir 2
+      RecibirMensaje(rob,*)
+      recibo(cant,rob)
+      si(cant>=max)
+        IDmax:=ID
+        max:=cant
+    Informar(IDmax)
+    enviaGanador(IDmax)
+  fin
+variables
+  rFiscal:fiscal
+  r1:recolectores
+  r2:recolectores
+comenzar
+  AsignarArea(rFiscal,areaFiscal)
+  AsignarArea(r1,areaRobot1)
+  AsignarArea(r2,areaRobot2)
+  AsignarArea(r1,areaRecolectores)
+  AsignarArea(r2,areaRecolectores)
+  Iniciar(rFiscal,1,1)
+  Iniciar(r1,25,1)
+  Iniciar(r2,30,1)
+fin

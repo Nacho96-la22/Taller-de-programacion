@@ -1,0 +1,109 @@
+programa tema7Cuadrado
+procesos
+  proceso juntarP(ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p + 1
+  fin
+  proceso giro260
+  comenzar
+    repetir 3
+      derecha
+  fin
+  proceso giro180
+  comenzar
+    repetir 2
+      derecha
+  fin
+  proceso cuadradoP (ES p:numero)
+  comenzar
+    giro180
+    repetir 10
+      juntarP(p)
+      mover
+    giro260
+  fin
+  proceso juntarF (ES f:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f + 1
+  fin
+  proceso cuadradoF(E id:numero; ES f:numero)
+  variables
+    av,ca:numero
+  comenzar
+    repetir 10
+      juntarF(f)
+      mover      
+    derecha
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,f1) 
+    {EnviarMensaje(2,f2)}
+    EnviarMensaje(3,p1) 
+    {EnviarMensaje(4,p2)}
+  fin
+areas
+  areaF: AreaP(14,6,14,6)
+  areaC1: AreaPC(3,3,13,13)
+  areaC2: AreaPC(16,3,26,13)
+robots
+  robot florero
+  variables
+    id,f:numero
+  comenzar
+    f:= 0
+    RecibirMensaje(id,rf)
+    repetir 4
+      cuadradoF(id,f)
+    EnviarMensaje(id,rf)
+    EnviarMensaje(f,rf)
+  fin
+  robot papelero
+  variables
+    id,p:numero
+  comenzar
+    p:= 0
+    RecibirMensaje(id,rf)
+    repetir 4
+      cuadradoP(p)
+    EnviarMensaje(id,rf)
+    EnviarMensaje(p,rf)
+  fin
+  robot fiscal
+  variables
+    id,total,f,p:numero
+  comenzar
+    total:= 0
+    enviarIDs
+    repetir 4
+      RecibirMensaje(id,*)
+      RecibirMensaje(f,*)
+      RecibirMensaje(p,*)
+      total:= f + p
+      si (id = 1)
+        Informar('Llego_primero_el_equipo_florero',id)
+      sino
+        si (id = 2)
+          Informar('Llego_primero_el_equipo_papelero',id)
+    Informar('La_cantidad_total_de_objetos_',total)
+  fin
+variables
+  f1,f2:florero
+  p1,p2:papelero
+  rf:fiscal
+comenzar
+  AsignarArea(f1,areaC1)
+  AsignarArea(f2,areaC2)
+  AsignarArea(p1,areaC1)
+  AsignarArea(p2,areaC2)
+  AsignarArea(rf,areaF)
+  Iniciar(f1,3,3)
+  Iniciar(f2,16,3)
+  Iniciar(rf,14,6)
+  Iniciar(p1,13,13)
+  Iniciar(p2,26,13)
+fin

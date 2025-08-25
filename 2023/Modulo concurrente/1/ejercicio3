@@ -1,0 +1,78 @@
+programa ejercicio3
+procesos
+  proceso compararTotal (E ptotal:numero; E ftotal:numero; ES cantidadEscalones:numero)
+  comenzar
+    si (ptotal-ftotal=1)
+      cantidadEscalones:= cantidadEscalones+1
+  fin
+  proceso juntarPapel (ES ptotal:numero)
+  variables
+    p: numero
+  comenzar
+    p:= 0
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p+1
+    repetir p
+      depositarPapel      
+    ptotal:= ptotal + p
+  fin
+  proceso juntarFlor (ES ftotal:numero)
+  variables
+    f:numero
+  comenzar
+    f:= 0
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      f:=f+1
+    repetir f
+      depositarFlor
+    ftotal:= ftotal + f
+  fin
+  proceso escalon (E tamanio:numero; ES cantidadEscalones:numero)
+  variables
+    ftotal,ptotal:numero
+  comenzar
+    ftotal:=0
+    ptotal:=0
+    juntarPapel(ptotal)
+    juntarFlor(ftotal)
+    repetir tamanio
+      mover
+      juntarPapel(ptotal)
+      juntarFlor(ftotal)
+    derecha
+    repetir tamanio
+      mover
+      juntarPapel(ptotal)
+      juntarFlor(ftotal)
+    repetir 3
+      derecha
+    compararTotal (ptotal, ftotal, cantidadEscalones)
+  fin
+areas
+  ciudad:AreaC(1,1,100,100)
+robots
+  robot tipo
+  variables
+    p,f,tamanio, cantidadEscalones:numero
+  comenzar
+    tamanio:= 0
+    cantidadEscalones:=0
+    repetir 4
+      tamanio:= tamanio +1
+      escalon (tamanio, cantidadEscalones)
+    Informar(cantidadEscalones)
+  fin
+variables
+  robot1:tipo
+  robot2:tipo
+  robot3:tipo
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  AsignarArea(robot3, ciudad)
+  Iniciar(robot1,12,14)
+  Iniciar (robot2,17, 10)
+  Iniciar (robot3,22,6)
+fin

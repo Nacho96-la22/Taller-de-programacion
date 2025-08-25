@@ -1,0 +1,84 @@
+programa parcial3cuadrados
+procesos
+  proceso cuadrado(E lado:numero;ES f:numero)
+  comenzar
+    repetir 4
+      repetir lado
+        mientras HayFlorEnLaEsquina
+          tomarFlor
+          f:=f+1
+        mover
+      derecha
+  fin
+  proceso depositar(E f:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir f
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+  fin
+areas
+  esquina:AreaC(50,50,50,50)
+  area1:AreaP(1,1,7,30)
+  area2:AreaP(10,1,16,30)
+  area3:AreaP(20,1,26,30)
+  areacoor:AreaP(100,100,100,100)
+robots
+  robot cuad
+  variables
+    lado,f:numero
+  comenzar
+    RecibirMensaje(lado,coordinador)
+    repetir 4
+      f:=0
+      cuadrado(lado,f)
+      depositar(f)
+      EnviarMensaje(f,coordinador)
+      Pos(PosAv,PosCa+lado+1)
+  fin
+  robot coordinador
+  variables
+    f,x:numero
+  comenzar
+    f:=0
+    Random(x,2,6)
+    EnviarMensaje(x,robot1)
+    Random(x,2,6)
+    EnviarMensaje(x,robot2)
+    Random(x,2,6)
+    EnviarMensaje(x,robot3)
+    repetir 12
+      RecibirMensaje(x,*)
+      si x<>0
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        mientras HayFlorEnLaEsquina
+          tomarFlor
+          f:=f+1
+        Pos(100,100)
+        LiberarEsquina(50,50)
+    Informar('flores_encontradas',f)
+  fin
+variables
+  robot1,robot2,robot3:cuad
+  coordinador:coordinador
+comenzar
+  AsignarArea(robot1,area1)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot3,area3)
+  AsignarArea(coordinador,areacoor)
+  AsignarArea(robot1,esquina)
+  AsignarArea(robot2,esquina)
+  AsignarArea(robot3,esquina)
+  AsignarArea(coordinador,esquina)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,10,1)
+  Iniciar(robot3,20,1)
+  Iniciar(coordinador,100,100)
+fin

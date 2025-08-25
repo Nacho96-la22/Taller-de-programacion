@@ -1,0 +1,112 @@
+programa ejercicio4a
+procesos
+  proceso juntarFlor
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso juntarPapel
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  
+  proceso siguienteAvP
+  comenzar
+    repetir 99
+      mover
+      juntarPapel
+    juntarPapel
+  fin
+  proceso limpiarPapel
+  comenzar
+    repetir 4
+      siguienteAvP
+      Pos(PosAv+1,1)
+    siguienteAvP
+  fin
+  proceso siguienteAvF
+  comenzar
+    repetir 99
+      mover
+      juntarFlor
+    juntarFlor
+  fin
+  proceso limpiarFlor
+  comenzar
+    repetir 4
+      siguienteAvF
+      Pos(PosAv+1,1)
+    siguienteAvF
+  fin
+  
+  proceso saltoArea
+  variables
+    AV:numero
+  comenzar
+    AV:= PosAv + 6
+    Pos (AV,1)
+  fin
+areas
+  c1: AreaPC(1,1,5,100)
+  c2: AreaPC(6,1,10,100)
+  c3: AreaPC(11,1,15,100)
+  c4: AreaPC(16,1,20,100)
+  c5: AreaPC(21,1,25,100)
+  c6: AreaPC(26,1,30,100)
+  c7: AreaPC(31,1,35,100)
+  c8: AreaPC(36,1,40,100)
+  c9: AreaPC(41,1,45,100)
+  c10: AreaPC(46,1,50,100)
+  c11: AreaPC(51,1,55,100)
+  c12: AreaPC(56,1,60,100)
+  c13: AreaPC(61,1,65,100)
+  c14: AreaPC(66,1,70,100)
+  c15: AreaPC(71,1,75,100)
+  c16: AreaPC(76,1,80,100)
+  c17: AreaPC(81,1,85,100)
+  c18: AreaPC(86,1,90,100)
+  c19: AreaPC(91,1,95,100)
+  c20: AreaPC(96,1,100,100)
+robots
+  robot florero
+  comenzar
+    repetir 3
+      limpiarFlor
+      saltoArea
+      limpiarFlor
+  fin
+  robot papelero
+  comenzar
+    repetir 3
+      limpiarPapel
+      saltoArea
+      limpiarPapel
+  fin
+variables
+  r1:florero
+  r2:papelero
+comenzar
+  AsignarArea(r1,c1)
+  AsignarArea(r2,c2)
+  AsignarArea(r1,c3)
+  AsignarArea(r2,c4)
+  AsignarArea(r1,c5)
+  AsignarArea(r2,c6)
+  AsignarArea(r1,c7)
+  AsignarArea(r2,c8)
+  AsignarArea (r1,c9)
+  AsignarArea (r2,c10)
+  AsignarArea (r1,c11)
+  AsignarArea (r2,c12)
+  AsignarArea (r1,c13)
+  AsignarArea (r2,c14)
+  AsignarArea (r1,c15)
+  AsignarArea (r2,c16)
+  AsignarArea (r1,c17)
+  AsignarArea (r2,c18)
+  AsignarArea (r1,c19)
+  AsignarArea (r2,c20)
+  Iniciar(r1,1,1)
+  Iniciar(r2,6,1)
+fin

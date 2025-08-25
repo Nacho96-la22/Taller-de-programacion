@@ -1,0 +1,108 @@
+programa TurnoGTema215112023
+procesos
+  proceso mayorJuntandoPapel(ES idMax:numero; ES papelMax:numero; E id:numero;E total:numero)
+  comenzar
+    si(papelMax < total)
+      papelMax:= total
+      idMax:= id
+  fin
+  proceso depositoAlpunto(E papel:numero)
+  variables
+    iniAv,iniCa:numero
+  comenzar
+    iniAv:= PosAv
+    iniCa:= PosCa
+    repetir papel
+      BloquearEsquina(100,100)
+      Pos(100,100)
+      depositarPapel
+      Pos(iniAv,iniCa)
+      LiberarEsquina(100,100)
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3 
+      derecha
+  fin
+  proceso juntarP(ES papel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papel:= papel + 1
+  fin
+  proceso hacerEscalon(E alto:numero;E ancho:numero; ES papel:numero)
+  comenzar
+    repetir alto
+      juntarP(papel)
+      mover
+    juntarP(papel)
+    derecha
+    repetir ancho
+      juntarP(papel)
+      mover
+    juntarP(papel)
+    izquierda
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,p1)
+    EnviarMensaje(2,p2)
+    EnviarMensaje(3,p3)
+  fin
+areas
+  ciudad: AreaC (1,1,100,100)  
+robots
+  robot papeleros
+  variables
+    id,papel,total:numero
+    alto,ancho:numero
+  comenzar
+    papel:= 0
+    total:= 0
+    RecibirMensaje(id,f)
+    repetir 3
+      Random(alto,1,4)
+      Random(ancho,1,3)
+      hacerEscalon(alto,ancho,papel)
+      total:= total + papel
+      si(HayPapelEnLaBolsa)
+        depositoAlpunto(papel)        
+        papel:= 0
+    EnviarMensaje(id,f)
+    EnviarMensaje(total,f)
+  fin
+  robot fiscalizador    
+  variables
+    id,total:numero
+    idMax,papelMax:numero
+  comenzar
+    idMax:= 0
+    papelMax:= -1
+    enviarIDs
+    repetir 3
+      RecibirMensaje(id,*)      
+      si(id=1)
+        RecibirMensaje(total,p1)
+        mayorJuntandoPapel(idMax,papelMax,id,total)
+      sino        
+        si(id=2)
+          RecibirMensaje(total,p2)
+          mayorJuntandoPapel(idMax,papelMax,id,total)
+        sino
+          RecibirMensaje(total,p3)
+          mayorJuntandoPapel(idMax,papelMax,id,total)
+    Informar('Juntó mas papeles el ID ',idMax)
+  fin
+variables
+  p1,p2,p3: papeleros
+  f: fiscalizador
+comenzar
+  AsignarArea(p1, ciudad)
+  AsignarArea(p2, ciudad)
+  AsignarArea(p3, ciudad)
+  AsignarArea(f, ciudad)
+  Iniciar(f, 1,1)
+  Iniciar(p1, 2,1)
+  Iniciar(p2, 32,1)
+  Iniciar(p3, 62,1)
+fin

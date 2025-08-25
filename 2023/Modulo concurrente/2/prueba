@@ -1,0 +1,155 @@
+programa prueba
+procesos 
+  proceso juntar(ES t:numero) 
+  comenzar 
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      t:=t+1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      t:=t+1  
+  fin
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  proceso enviarARandom(E rob:numero)
+  comenzar
+    si(rob=1)
+      EnviarMensaje(V,r1)
+    sino
+      si(rob=2)
+        EnviarMensaje(V,r2)
+      sino
+        si(rob=3)
+          EnviarMensaje(V,r3)
+        sino
+          si(rob=4)
+            EnviarMensaje(V,r4)
+  fin 
+  proceso limpiarEsq(E av:numero;E ca:numero;ES total:numero)
+  variables
+    PAv:numero
+    PCa:numero
+  comenzar
+    PAv:=PosAv
+    PCa:=PosCa
+    Pos(av,ca)
+    juntar(total)
+    Pos(PAv,PCa)
+  fin
+  proceso avisarFinRandom
+  comenzar
+    EnviarMensaje(F,r1)
+    EnviarMensaje(F,r2)
+    EnviarMensaje(F,r3)
+    EnviarMensaje(F,r4)
+  fin
+  proceso consultarQuien(E num:numero;ES total:numero)
+  comenzar
+    si(num=1)
+      RecibirMensaje(total,r1)
+    sino  
+      si(num=2)
+        RecibirMensaje(total,r2)
+      sino
+        si(num=3)
+          RecibirMensaje(total,r3)
+        sino
+          si(num=4)
+            RecibirMensaje(total,r4)
+  fin
+  proceso maximo(E id:numero;E t:numero;ES idMax:numero;ES max:numero)
+  comenzar
+    si(t>max)
+      idMax:=id
+      max:=t    
+  fin
+  proceso enviarIDMax(E idMax:numero)
+  comenzar
+    EnviarMensaje(idMax,r1)
+    EnviarMensaje(idMax,r2)
+    EnviarMensaje(idMax,r3)
+    EnviarMensaje(idMax,r4)
+  fin
+areas
+  areaRestringida:AreaPC(25,25,75,75)
+  cf:AreaP(1,1,1,1)
+  c1:AreaP(25,1,25,1)
+  c2:AreaP(30,1,30,1)
+  c3:AreaP(35,1,35,1)
+  c4:AreaP(40,1,40,1)
+robots
+  robot trabajador
+  variables
+    id:numero
+    av:numero
+    ca:numero
+    ok:boolean
+    t:numero
+    idMax:numero
+  comenzar
+    t:=0 
+    RecibirMensaje(id,rf)
+    RecibirMensaje(ok,rf)
+    mientras(ok)
+      Random(av,25,75)
+      Random(ca,25,75)
+      limpiarEsq(av,ca,t)
+      EnviarMensaje(F,rf){avisa que termino}
+      RecibirMensaje(ok,rf){corte de control}
+    EnviarMensaje(id,rf)
+    Informar(t){inf para controlar el prog}
+    EnviarMensaje(t,rf)
+    RecibirMensaje(idMax,rf)
+    si(idMax=id)
+      Pos(50,50) 
+  fin
+  robot fiscal  
+  variables
+    rob:numero
+    ok:boolean
+    total:numero
+    idMax:numero
+    max:numero
+  comenzar
+    enviarID
+    repetir(10)
+      Random(rob,1,4)
+      enviarARandom(rob)
+      RecibirMensaje(ok,*)
+    avisarFinRandom
+    max:=0
+    repetir(4)
+      RecibirMensaje(rob,*)
+      consultarQuien(rob,total)
+      maximo(rob,total,idMax,max)
+    Informar(idMax){inf para controlar el prog}
+    enviarIDMax(idMax)
+  fin
+variables
+  r1:trabajador
+  r2:trabajador
+  r3:trabajador
+  r4:trabajador
+  rf:fiscal
+comenzar
+  AsignarArea(rf,cf)
+  AsignarArea(r1,c1)
+  AsignarArea(r1,areaRestringida)
+  AsignarArea(r2,c2)
+  AsignarArea(r2,areaRestringida)
+  AsignarArea(r3,c3)
+  AsignarArea(r3,areaRestringida)
+  AsignarArea(r4,c4)
+  AsignarArea(r4,areaRestringida)
+
+  Iniciar(rf,1,1)
+  Iniciar(r1,25,1)
+  Iniciar(r2,30,1)
+  Iniciar(r3,35,1)
+  Iniciar(r4,40,1)
+fin

@@ -1,0 +1,110 @@
+programa parcialTurnoE
+procesos
+  proceso recorridoMax(E id:numero; E paso:numero; ES idMax:numero; ES pasoMax:numero)
+  comenzar
+    si(paso > pasoMax)
+      idMax:= id
+      pasoMax:= paso
+  fin
+  proceso depositoAlPunto
+  variables
+    actAv,actCa:numero
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    Pos(actAv,actCa)
+    LiberarEsquina(50,50)
+  fin
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso cuadrado (E tama:numero; ES paso:numero)
+  comenzar
+    repetir tama
+      juntarFlores      
+      mover
+      paso:= paso + 1
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,c1)
+    EnviarMensaje(2,c2)
+    EnviarMensaje(3,c3)
+  fin
+areas
+  area1: AreaP (1,1,5,14)
+  area2: AreaP (7,1,11,14)
+  area3: AreaP (14,1,18,14)
+  areaCoord: AreaP (51,51,51,51)
+  areaDeposito: AreaPC (50,50,50,50)
+robots
+  robot competidores
+  variables
+    id,tama,paso:numero
+    actCa,actAv:numero
+  comenzar
+    paso:= 0
+    RecibirMensaje(id,coord)
+    repetir 2
+      actAv:= PosAv
+      actCa:= PosCa
+      Random(tama,1,4)
+      repetir 4
+        cuadrado(tama,paso)
+        derecha
+      depositoAlPunto
+      Pos(actAv,actCa+tama+1)
+    Random(tama,1,4)
+    repetir 4
+      cuadrado(tama,paso)
+      derecha
+    depositoAlPunto
+    Informar(paso)
+    EnviarMensaje(id,coord)
+    EnviarMensaje(paso,coord)
+  fin
+  robot coordinador
+  variables
+    id,paso,idMax,pasoMax:numero
+  comenzar
+    idMax:= 0
+    pasoMax:= -1
+    enviarIDs
+    repetir 3
+      RecibirMensaje(id,*)
+      si(id=1)
+        RecibirMensaje(paso,c1)
+        recorridoMax(id,paso,idMax,pasoMax)
+      sino
+        si(id=2)
+          RecibirMensaje(paso,c2)
+          recorridoMax(id,paso,idMax,pasoMax)
+        sino
+          RecibirMensaje(paso,c3)
+          recorridoMax(id,paso,idMax,pasoMax)
+    Informar('Id_ecorrio_mas_esquina_',idMax)
+  fin
+variables
+  c1,c2,c3: competidores
+  coord: coordinador
+comenzar
+  AsignarArea(c1, area1)
+  AsignarArea(c2, area2)
+  AsignarArea(c3, area3)
+  AsignarArea(coord, areaCoord)
+  
+  AsignarArea(c1, areaDeposito)
+  AsignarArea(c2, areaDeposito)
+  AsignarArea(c3, areaDeposito)
+  
+  Iniciar(c1, 1,1)
+  Iniciar(c2, 7,1)
+  Iniciar(c3, 14,1)
+  Iniciar(coord, 51,51)
+fin

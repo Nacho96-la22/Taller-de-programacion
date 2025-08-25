@@ -1,0 +1,128 @@
+programa ejercicio1d
+procesos
+  proceso juntarFlor (ES f:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      f:=f+1
+  fin
+  proceso recorrer (ES f:numero)
+  comenzar
+    repetir 9
+      juntarFlor(f)
+      mover
+    juntarFlor(f)
+  fin
+  proceso enviarAlJefe(E id:numero; E f:numero)
+  comenzar
+    si(id=1)
+      EnviarMensaje(1,fiscal)
+      EnviarMensaje(f,fiscal)
+    sino
+      si(id=2)
+        EnviarMensaje(2,fiscal)
+        EnviarMensaje(f,fiscal)
+      sino
+        si(id=3)
+          EnviarMensaje(3,fiscal)
+          EnviarMensaje(f,fiscal)
+        sino
+          si(id=4)
+            EnviarMensaje(4,fiscal)
+            EnviarMensaje(f,fiscal)
+          sino
+            si(id=5)
+              EnviarMensaje(5,fiscal)
+              EnviarMensaje(f,fiscal)
+            sino
+              si(id=6)
+                EnviarMensaje(6,fiscal)
+                EnviarMensaje(f,fiscal)
+  fin
+  proceso preguntarQuien(E ID:numero; ES cant:numero)
+  comenzar
+    si(ID=1)
+      RecibirMensaje(cant,florero1)
+    sino
+      si(ID=2)
+        RecibirMensaje(cant,florero2)
+      sino
+        si(ID=3)
+          RecibirMensaje(cant,florero3)
+        sino
+          si(ID=4)
+            RecibirMensaje(cant,florero4)
+          sino
+            si(ID=5)
+              RecibirMensaje(cant,florero5)
+            sino
+              si(ID=6)
+                RecibirMensaje(cant,florero6)  
+  fin
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1,florero1)
+    EnviarMensaje(2,florero2)
+    EnviarMensaje(3,florero3)
+    EnviarMensaje(4,florero4)
+    EnviarMensaje(5,florero5)
+    EnviarMensaje(6,florero6)
+  fin
+areas  
+  c1: AreaP(1,1,1,10)
+  c2: AreaP(2,11,2,20)
+  c3: AreaP(3,21,3,30)
+  c4: AreaP(4,31,4,40)
+  c5: AreaP(5,41,5,50)
+  c6: AreaP(6,51,6,60)
+  ct: AreaP(2,1,2,1)
+robots
+  robot robot1
+  variables
+    f,id:numero
+  comenzar
+    f:=0
+    RecibirMensaje(id,fiscal)
+    recorrer(f)
+    enviarAlJefe(id,f)
+  fin
+  robot robotFiscal
+  variables
+    max, ID, IDmax, cant:numero
+  comenzar
+    max:= 0
+    IDmax:= 0
+    enviarID
+    repetir 6
+      RecibirMensaje(ID,*)
+      preguntarQuien(ID,cant)
+      si (cant >= max)
+        max:= cant
+        IDmax:= ID
+    Informar(IDmax)
+    Informar(cant)
+  fin
+variables
+  florero1:robot1
+  florero2:robot1
+  florero3:robot1
+  florero4:robot1
+  florero5:robot1
+  florero6:robot1
+  fiscal:robotFiscal
+comenzar
+  AsignarArea (florero1,c1)
+  AsignarArea (florero2,c2)
+  AsignarArea (florero3,c3)
+  AsignarArea (florero4,c4)
+  AsignarArea (florero5,c5)
+  AsignarArea (florero6,c6)
+  AsignarArea(fiscal,ct)
+  Iniciar (florero1,1,1)
+  Iniciar (florero2,2,11)
+  Iniciar (florero3,3,21)
+  Iniciar (florero4,4,31)
+  Iniciar (florero5,5,41)
+  Iniciar (florero6,6,51)
+  Iniciar (fiscal,2,1)
+fin

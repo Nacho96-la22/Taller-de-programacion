@@ -1,0 +1,63 @@
+{Bienvenidos al entorno CMRE.
+Lo siguiente es un cÃƒÂ³digo de ejemplo que implementa un
+proceso que recibe un nÃƒÂºmero de avenida como parÃƒÂ¡metro,
+se posiciona en esa avenida y la recorre.}
+
+programa ejercicio3
+areas
+  coordiArea: AreaP(4,1,4,1)
+  b1Area: AreaP (1,1,1,100)
+  b2Area: AreaP (2,1,2,100)
+  b3Area: AreaP (3,1,3,100)
+robots
+  robot barrerero
+  variables
+    id,papel:numero
+    ok:boolean
+  comenzar
+    ok:= V
+    RecibirMensaje(id,c)
+    mientras (PosCa <> 100)
+      Random(papel,1,5)
+      repetir papel
+        si(HayPapelEnLaEsquina)
+          tomarPapel
+        sino
+          si(PosCa <100)
+            mover 
+      si(id=1)
+        EnviarMensaje(F,b2)
+        EnviarMensaje(F,b3)
+      sino 
+        si(id=2)
+          EnviarMensaje(F,b1)
+          EnviarMensaje(F,b3)
+        sino
+          EnviarMensaje(F,b1)
+          EnviarMensaje(F,b2)
+      repetir 2
+        RecibirMensaje(ok,*)
+  fin
+  robot coordinador
+  variables 
+    id:numero
+  comenzar 
+    EnviarMensaje(1,b1)
+    EnviarMensaje(2,b2)
+    EnviarMensaje(3,b3)
+  fin
+variables
+  b1: barrerero
+  b2: barrerero
+  b3: barrerero
+  c: coordinador
+comenzar
+  AsignarArea(b1, b1Area)
+  AsignarArea(b2, b2Area)
+  AsignarArea(b3, b3Area)  
+  AsignarArea(c,coordiArea)
+  Iniciar(b1, 1,1)
+  Iniciar(b2, 2,1)
+  Iniciar(b3, 3,1)
+  Iniciar(c, 4,1)
+fin

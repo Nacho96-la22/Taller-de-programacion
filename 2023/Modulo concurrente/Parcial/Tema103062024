@@ -1,0 +1,129 @@
+programa Tema103062024
+procesos  
+  proceso avisaALosPerdedores(E id:numero; E juego:boolean)
+  comenzar
+    si(id=1)      
+      EnviarMensaje(juego,b2)
+      EnviarMensaje(juego,b3)
+    sino
+      si(id=2)
+        EnviarMensaje(juego,b1)
+        EnviarMensaje(juego,b3)
+      sino
+        EnviarMensaje(juego,b1)
+        EnviarMensaje(juego,b2)
+  fin
+  proceso avisaAlEscondedor(E id:numero; E gana:boolean)
+  comenzar    
+    EnviarMensaje(id,e)          
+    EnviarMensaje(gana,e)  
+  fin
+  proceso buscaAlPunto(E av:numero;E ca:numero;E iniAv:numero; E iniCa:numero; ES gana:boolean)
+  comenzar
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      gana:= V
+    Pos(iniAv,iniCa)
+    LiberarEsquina(av,ca)
+  fin
+  proceso iniciaElJuego(E inicia:boolean)
+  comenzar
+    EnviarMensaje(inicia,b1)
+    EnviarMensaje(inicia,b2)
+    EnviarMensaje(inicia,b3)
+  fin
+  proceso escondeFlorEnCuadrante
+  variables    
+    av,ca,iniAv,iniCa:numero
+  comenzar
+    iniAv:= PosAv
+    iniCa:= PosCa
+    Random(av,10,13)
+    Random(ca,10,13)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      Pos(av,ca)
+      depositarFlor
+      Pos(iniAv,iniCa)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,b1)
+    EnviarMensaje(2,b2)
+    EnviarMensaje(3,b3)
+  fin
+areas
+  areaB1: AreaP (1,1,1,1)
+  areaB2: AreaP (2,2,2,2)
+  areaB3: AreaP (3,3,3,3)
+  areaE: AreaP (4,4,4,4)
+  areaCuadrante: AreaPC (10,10,13,13)
+robots
+  robot buscadores
+  variables    
+    id:numero
+    juego,gana:boolean
+    av,ca,iniAv,iniCa:numero    
+  comenzar    
+    iniAv:= PosAv
+    iniCa:= PosCa
+    gana:= F
+    RecibirMensaje(id,e)
+    RecibirMensaje(juego,e)
+    mientras(juego<>F)
+      Random(av,10,13)
+      Random(ca,10,13)
+      buscaAlPunto(av,ca,iniAv,iniCa,gana) {va a buscar la localizada}
+      si(gana=V) 
+        juego:= F {termina el juego} 
+        avisaAlEscondedor(id,gana) 
+      avisaALosPerdedores(id,juego) 
+      repetir 2
+        RecibirMensaje(juego,*)
+      si(gana=V) {repetido porque el ganador ya les habia avisado a los }
+        juego:=F {perdedores pero el juego sigue continunado entonces debo}
+  fin            {preguntar de nuevo para que cierra el caso.}
+  robot escondedor
+  variables
+    id,ganador:numero
+    juego,gana:boolean
+    av,ca,iniAv,iniCa:numero
+  comenzar    
+    escondeFlorEnCuadrante
+    enviarIDs
+    juego:= V
+    iniciaElJuego(juego)
+    mientras(gana<>V)
+      RecibirMensaje(id,*)
+      si(id=1)
+        RecibirMensaje(gana,b1)
+      sino
+        si(id=2)
+          RecibirMensaje(gana,b2)
+        sino
+          RecibirMensaje(gana,b3)
+      si(gana=V)
+        ganador:= id
+    Informar('El_ganador_es_',ganador)
+  fin
+variables
+  b1,b2,b3: buscadores
+  e:escondedor
+comenzar
+  AsignarArea(b1, areaB1)
+  AsignarArea(b2, areaB2)
+  AsignarArea(b3, areaB3)
+  AsignarArea(e, areaE)
+  
+  AsignarArea(b1, areaCuadrante)
+  AsignarArea(b2, areaCuadrante)
+  AsignarArea(b3, areaCuadrante)
+  AsignarArea(e, areaCuadrante)
+  
+  Iniciar(b1, 1,1)
+  Iniciar(b2, 2,2)
+  Iniciar(b3, 3,3)
+  Iniciar(e, 4,4)
+fin

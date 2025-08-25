@@ -1,0 +1,102 @@
+programa ejercicio5
+procesos
+  proceso rejuntarPapel(E papel:numero; E actAv:numero; E actCa:numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    tomarPapel
+    Pos(actAv,actCa)
+    LiberarEsquina(100,1)
+    depositarPapel
+  fin
+  proceso Atrabajar(E id:numero; E cant:numero)
+  comenzar
+    si(id=1)
+      EnviarMensaje(cant,c1)
+    sino
+      si(id=2)
+        EnviarMensaje(cant,c2)
+      sino
+        EnviarMensaje(cant,c3)
+  fin
+  proceso depositoLaEsquina(E cant:numero; E actAv:numero; E actCa:numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    repetir cant
+      depositarPapel
+    Pos(actAv,actCa)
+    LiberarEsquina(100,1)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,c1)
+    EnviarMensaje(2,c2)
+    EnviarMensaje(3,c3)
+  fin
+areas
+  area1: AreaP (10,1,10,1)
+  area2: AreaP (11,1,11,1)
+  area3: AreaP (12,1,12,1)
+  areaS: AreaP (13,1,13,1)
+  esquina: AreaPC (100,1,100,1)
+robots
+  robot cliente
+  variables
+    id,papel:numero
+    actAv,actCa:numero
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    RecibirMensaje(id,s)
+    repetir 4
+      EnviarMensaje(id,s)
+      EnviarMensaje(V,s)
+      RecibirMensaje(papel,s)
+      repetir papel
+        rejuntarPapel(papel,actAv,actCa)
+    EnviarMensaje(F,s)  
+  fin
+  robot servidor
+  variables
+    estado:boolean
+    id,cant,finaliza:numero
+    av,ca,actAv,actCa:numero
+  comenzar
+    actAv:= PosAv
+    actCa:= PosCa
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+    enviarIDs
+    finaliza:= 0
+    RecibirMensaje(id,*)
+    RecibirMensaje(estado,*)
+    mientras (finaliza < 3)      
+      si (estado)
+        Random(cant,1,5)
+        depositoLaEsquina(cant,actAv,actCa)
+        Atrabajar(id,cant)
+        RecibirMensaje(id,*)
+        RecibirMensaje(estado,*)
+      sino
+        finaliza:= finaliza + 1
+  fin
+variables
+  c1,c2,c3: cliente
+  s:servidor
+comenzar
+  AsignarArea(c1, area1)
+  AsignarArea(c2, area2)
+  AsignarArea(c3, area3)
+  AsignarArea(s, areaS)
+  
+  AsignarArea(c1, esquina)
+  AsignarArea(c2, esquina)
+  AsignarArea(c3, esquina)
+  AsignarArea(s, esquina) 
+  
+  Iniciar(c1, 10,1)
+  Iniciar(c2, 11,1)
+  Iniciar(c3, 12,1)
+  Iniciar(s, 13,1)
+fin

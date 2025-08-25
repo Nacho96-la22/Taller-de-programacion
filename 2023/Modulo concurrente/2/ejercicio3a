@@ -1,0 +1,81 @@
+programa ejercicio3
+procesos
+  proceso juntarP (ES p:numero)
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+      p:=p+1 
+  fin
+  proceso juntarF(ES f:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:=f+1
+  fin
+  proceso recorrerP(ES p:numero)
+  comenzar
+    repetir 9
+      juntarP(p)
+      mover
+    juntarP(p)
+  fin
+  proceso recorrerF(ES f:numero)
+  comenzar
+    repetir 9
+      juntarF(f)
+      mover
+    juntarF(f)
+  fin
+areas
+  ciudadA1: AreaP(1,1,10,1)
+  ciudadA2: AreaP(11,1,20,1)
+  ciudadB1: AreaP(1,5,10,5)
+  ciudadB2: AreaP(11,5,20,5)
+robots
+  robot papelero
+  variables
+    p1,p2:numero
+  comenzar
+    p1:=0
+    p2:=0
+    derecha
+    si(PosAv=1)
+      recorrerP(p1)
+      Informar(p1)
+      EnviarMensaje(p1,a2)
+    si(PosAv=11)
+      RecibirMensaje(p2,a1)
+      recorrerP(p2)
+      Informar(p2)
+  fin
+  robot florero
+  variables
+    f1,f2:numero
+  comenzar
+    f1:=0
+    f2:=0
+    derecha
+    si(PosAv=1)
+      recorrerF(f1)
+      Informar(f1)
+      EnviarMensaje(f1,b2)
+    si(PosAv=11)
+      RecibirMensaje(f2,b1)
+      recorrerF(f2)
+      Informar(f2)
+  fin
+variables
+  a1:papelero
+  a2:papelero
+  b1:florero
+  b2:florero
+comenzar
+  AsignarArea(a1,ciudadA1)
+  AsignarArea(a2,ciudadA2)
+  AsignarArea(b1,ciudadB1)
+  AsignarArea(b2,ciudadB2)
+  Iniciar(a1,1,1)
+  Iniciar(a2,11,1)
+  Iniciar(b1,1,5)
+  Iniciar(b2,11,5)
+fin

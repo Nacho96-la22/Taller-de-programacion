@@ -1,0 +1,105 @@
+programa ejercicio2
+procesos
+  proceso llegoUnaEtapa(E id:numero)
+  variables
+    ok:boolean
+  comenzar
+    si(id=1)
+      EnviarMensaje(V,r2)
+      EnviarMensaje(V,r3)
+      RecibirMensaje(ok,*)
+      RecibirMensaje(ok,*)
+    sino
+      si(id=2)
+        EnviarMensaje(V,r1)
+        EnviarMensaje(V,r3)
+        RecibirMensaje(ok,*)
+        RecibirMensaje(ok,*)
+      sino
+        EnviarMensaje(V,r1)
+        EnviarMensaje(V,r2)
+        RecibirMensaje(ok,*)
+        RecibirMensaje(ok,*)
+  fin
+  proceso depositarAlPunto
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)     
+    mientras(HayFlorEnLaBolsa) 
+      depositarFlor
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+  proceso juntarF
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso mandoIDs
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+  fin
+areas
+  r1Area: AreaP (1,1,100,1)
+  r2Area: AreaP (1,2,100,2)
+  r3Area: AreaP (1,3,100,3)
+  fiscalArea: AreaP (1,4,1,4)
+  puntoArea: AreaPC (50,50,50,50)
+robots
+  robot recolectores
+  variables
+    id:numero
+    ok:boolean
+  comenzar    
+    RecibirMensaje(id,f)
+    derecha
+    mientras(PosAv < 100)
+      repetir 9
+        juntarF
+        mover
+      juntarF
+      depositarAlPunto
+      llegoUnaEtapa(id)
+    EnviarMensaje(V,f)
+  fin
+  robot fiscalizador
+  variables
+    id,total,av,ca:numero
+    ok:boolean
+  comenzar
+    mandoIDs
+    repetir 3
+      RecibirMensaje(ok,*)
+    total:= 0
+    av:= PosAv
+    ca:= PosCa
+    Pos(50,50)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      total:= total + 1
+    Pos(av,ca)
+    Informar('La_cantidad_total_de_flores_juntadas_',total)
+  fin
+variables
+  r1,r2,r3: recolectores
+  f: fiscalizador
+comenzar
+  AsignarArea(r1, r1Area)
+  AsignarArea(r2, r2Area)
+  AsignarArea(r3, r3Area)
+  AsignarArea(f, fiscalArea)
+  AsignarArea(r1, puntoArea)  
+  AsignarArea(r2, puntoArea)
+  AsignarArea(r3, puntoArea)
+  AsignarArea(f, puntoArea)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 1,2)
+  Iniciar(r3, 1,3)
+  Iniciar(f, 1,4)
+fin

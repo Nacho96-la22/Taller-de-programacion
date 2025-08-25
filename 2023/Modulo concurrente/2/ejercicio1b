@@ -1,0 +1,59 @@
+programa ejercicio1b
+procesos
+  proceso juntarFlor (ES f:numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      f:=f+1
+  fin
+  proceso recorrer (ES f:numero)
+  comenzar
+    repetir 9
+      juntarFlor(f)
+      mover
+    juntarFlor(f)
+  fin
+  proceso preguntar(E f:numero)
+  variables
+    cant:numero
+  comenzar
+    si (PosAv=1)
+      EnviarMensaje(f,florero2)
+    sino
+      EnviarMensaje(f,florero1)
+    RecibirMensaje(cant,*) 
+    si(f >= cant)
+      EnviarMensaje(f,fiscal)
+  fin
+areas  
+  c1: AreaPC(1,1,1,10)
+  c2: AreaPC(2,11,2,20)
+  c3: AreaP(2,1,2,1)
+robots
+  robot robot1
+  variables
+    f:numero
+  comenzar
+    f:=0
+    recorrer(f)
+    preguntar(f)
+  fin
+  robot robot3
+  variables
+    num:numero
+  comenzar
+    RecibirMensaje(num,*)
+    Informar(num)
+  fin
+variables
+  florero1:robot1
+  florero2:robot1
+  fiscal:robot3
+comenzar
+  AsignarArea (florero1,c1)
+  AsignarArea (florero2,c2)
+  AsignarArea(fiscal,c3)
+  Iniciar (florero1,1,1)
+  Iniciar (florero2,2,11)
+  Iniciar (fiscal,2,1)
+fin

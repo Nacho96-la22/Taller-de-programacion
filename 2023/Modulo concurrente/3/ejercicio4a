@@ -1,0 +1,111 @@
+programa ejercicio4a
+procesos
+  proceso recolectarFlor(E soyUltimo:numero)
+  comenzar
+    si (1 = soyUltimo)
+      EnviarMensaje(1,j1) {el 1 es el ultimo jugador}
+      EnviarMensaje(2,j2) {el 2 no es el ultimo jugador}
+      EnviarMensaje(2,j3)
+      EnviarMensaje(2,j4)
+    sino
+      si (2 = soyUltimo)
+        EnviarMensaje(1,j2)
+        EnviarMensaje(2,j1)
+        EnviarMensaje(2,j3)
+        EnviarMensaje(2,j4)
+      sino
+        si (3 = soyUltimo)
+          EnviarMensaje(1,j3)
+          EnviarMensaje(2,j1)
+          EnviarMensaje(2,j2)
+          EnviarMensaje(2,j4)
+        sino
+          si (4 = soyUltimo)
+            EnviarMensaje(1,j4)
+            EnviarMensaje(2,j1)
+            EnviarMensaje(2,j2)
+            EnviarMensaje(2,j3)
+  fin
+  proceso escuchoUltimo(ES soyUltimo:numero)
+  variables
+    id:numero
+  comenzar
+    repetir 3
+      RecibirMensaje(id,*)
+    RecibirMensaje(id,*)
+    soyUltimo:= id
+  fin
+  proceso enviarID
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+    EnviarMensaje(3,j3)
+    EnviarMensaje(4,j4)
+  fin
+areas
+  areaLibre: AreaPC(10,10,11,11)
+  areaJ1: AreaP(9,9,9,9)
+  areaJ2: AreaP(9,10,9,10)
+  areaJ3: AreaP(9,11,9,11)
+  areaJ4: AreaP(9,12,9,12)
+  areaC: AreaP(1,1,1,1)
+robots
+  robot florero
+  variables
+    id,avAct,caAct,ult:numero
+    HayFlor:boolean
+  comenzar
+    HayFlor:= V
+    RecibirMensaje(id,c)
+    avAct:= PosAv
+    caAct:= PosCa
+    mientras(HayFlor)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      si (HayFlorEnLaEsquina)
+        tomarFlor
+        BloquearEsquina(11,11)
+        Pos(11,11)
+        LiberarEsquina(10,10)
+        depositarFlor
+        Pos(avAct,caAct)
+        LiberarEsquina(11,11)
+      sino
+        HayFlor:= F
+        Pos(avAct,caAct)
+        LiberarEsquina(10,10)
+    EnviarMensaje(id,c)
+    RecibirMensaje(ult,c)
+    si (ult = 1) {es para el 1 tiene q recolectar las flores y el 2 no hago nada}
+      Pos(11,11)
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor     
+  fin
+  robot coordinador
+  variables
+    id,soyUltimo:numero
+  comenzar
+    enviarID
+    escuchoUltimo(soyUltimo)
+    recolectarFlor(soyUltimo) {es necesiario identificarlo porque si no pongo}
+    Informar(soyUltimo)       {y nunca termina de ejecutar}   
+  fin
+variables
+  j1,j2,j3,j4:florero
+  c:coordinador
+comenzar
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,areaLibre)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,areaLibre)
+  AsignarArea(j3,areaJ3)
+  AsignarArea(j3,areaLibre)
+  AsignarArea(j4,areaJ4)
+  AsignarArea(j4,areaLibre)
+  AsignarArea(c,areaC)
+  Iniciar(j1,9,9)
+  Iniciar(j2,9,10)
+  Iniciar(j3,9,11)
+  Iniciar(j4,9,12)
+  Iniciar(c,1,1)
+fin

@@ -1,0 +1,121 @@
+programa parcialTema112062023
+{Al final, lo uso con 4x4 porque el enunciado esta mal por calculo}
+procesos
+  proceso esperaPorCompa(E id:numero)
+  variables
+    ok:boolean
+  comenzar
+    si (id = 1)
+      EnviarMensaje(V,j2)
+      RecibirMensaje(ok,j2)
+    sino
+      EnviarMensaje(V,j1)
+      RecibirMensaje(ok,j1)
+  fin
+  proceso recolectar
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso cuadrado2
+  comenzar
+    repetir 3
+      recolectar 
+      mover
+    mover
+    BloquearEsquina(PosAv,PosCa-1)
+    recolectar
+    derecha
+    LiberarEsquina(PosAv,PosCa-1)
+    mover
+    repetir 3
+      recolectar
+      mover
+    derecha
+    repetir 2
+      lado
+  fin
+  proceso cuadrado1
+  comenzar
+    repetir 2
+      lado
+    repetir 3
+      recolectar
+      mover
+    BloquearEsquina(PosAv,PosCa-2)
+    mover
+    recolectar
+    derecha
+    LiberarEsquina(PosAv,PosCa-2)
+    lado
+  fin
+  proceso lado
+  comenzar
+    repetir 4
+      recolectar
+      mover
+    derecha
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+  fin
+areas          
+  areaJ1: AreaP(2,2,2,2)
+  areaJ2: AreaP(3,3,3,3)
+  areaRF: AreaP(1,1,1,1)
+  cuadrado1: AreaPC(5,7,13,15) 
+  cuadrado2: AreaPC(14,7,22,15)
+  cuadrado3: AreaPC(23,7,31,15)
+robots
+  robot jugador1
+  variables
+    id,avAct,caAct:numero
+  comenzar
+    RecibirMensaje(id,rf)
+    Pos(5,11)
+    cuadrado1
+  fin
+  robot jugador2
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,rf)
+    Pos(9,7)
+    cuadrado2
+  fin
+  robot fiscal
+  variables
+    id:numero
+  comenzar
+    enviarIDs
+    repetir 3
+      RecibirMensaje(id,*)
+      si (id = 1)
+        Informar('Llego_primero_id_',id)
+        RecibirMensaje(id,j2)
+      sino
+        Informar('Llego_primero_id_',id)
+        RecibirMensaje(id,j1)
+  fin
+variables
+  j1:jugador1
+  j2:jugador2
+  rf:fiscal
+comenzar
+  AsignarArea(rf,areaRF)
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,cuadrado1)
+  AsignarArea(j1,cuadrado2)
+  AsignarArea(j1,cuadrado3)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,cuadrado1)
+  AsignarArea(j2,cuadrado2)
+  AsignarArea(j2,cuadrado3)
+  Iniciar(j1,2,2)
+  Iniciar(j2,3,3)
+  Iniciar(rf,1,1)
+fin

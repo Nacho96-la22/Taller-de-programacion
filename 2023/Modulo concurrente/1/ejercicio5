@@ -1,0 +1,82 @@
+programa ejercicio5
+procesos
+  proceso juntarPapel
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso juntarFlor
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso preguntarDepositar (E ok:boolean)
+  comenzar
+    si(ok)
+      depositarFlor
+    sino
+      depositarPapel
+  fin
+  proceso preguntarJuntar (E ok:boolean)
+  comenzar
+    si(ok)
+      juntarFlor
+    sino
+      juntarPapel
+  fin
+  proceso recorrer (E dir:numero; E ok:boolean)
+  comenzar
+    repetir dir
+      preguntarJuntar(ok)
+      mover
+    preguntarJuntar (ok)
+    preguntarDepositar(ok)
+  fin
+  proceso direccion (E dir:numero; E ok:boolean)
+  variables 
+    AV,CA:numero
+  comenzar
+    AV:= PosAv
+    CA:= PosCa
+    repetir 2
+      recorrer(dir, ok)
+      si (ok)
+        Pos(AV,CA-5)
+      sino
+        Pos(AV+5,CA)
+  fin
+areas
+  c1:AreaC(1,1,100,100)
+robots
+  robot trabajador1
+  comenzar
+    si (((PosAv=1)&(PosCa=80))|((PosAv=70)&(PosCa=15)))
+      derecha
+      si ((PosAv=1)&(PosCa=80))
+        direccion (15, V)
+      si((PosAv=70)&(PosCa=15))
+        direccion (30,V)
+  fin
+  robot trabajador2
+  comenzar
+    si (((PosAv=75)&(PosCa=80))|((PosAv=10)&(PosCa=1)))
+      si ((PosAv=75)&(PosCa=80))
+        direccion(20,F)   
+      si ((PosAv=10)&(PosCa=1))
+        direccion(10,F)
+  fin
+variables
+  robot1:trabajador1
+  robot2:trabajador2
+  robot3:trabajador1
+  robot4:trabajador2
+comenzar
+  AsignarArea(robot1,c1)
+  AsignarArea(robot2,c1)
+  AsignarArea(robot3,c1)
+  AsignarArea (robot4,c1)
+  Iniciar(robot1,1,80)
+  Iniciar(robot2,75,80)
+  Iniciar(robot3,70,15)
+  Iniciar (robot4,10,1)
+fin

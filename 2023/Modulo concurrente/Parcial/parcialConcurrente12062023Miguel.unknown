@@ -1,0 +1,143 @@
+programa parcialConcurrente12062023
+procesos
+  proceso tomarPapeloFlor
+  comenzar
+    mientras HayPapelEnLaEsquina
+      tomarPapel
+    mientras HayFlorEnLaEsquina
+      tomarFlor
+  fin
+  proceso hacerLado(E longitud: numero)
+  comenzar
+    repetir (longitud-1)
+      tomarPapeloFlor
+      mover
+    tomarPapeloFlor
+  fin
+  proceso hacerEsquinaPrivada(E longitud: numero)
+  comenzar
+    repetir 2
+      hacerLado(longitud)
+      derecha
+  fin
+  
+  proceso hacerEsquinaCompartida(E longitud: numero; E id: numero)
+  comenzar
+    hacerLado(longitud -1)
+    si id = 1
+      BloquearEsquina(PosAv(), PosCa() - 1)
+      mover
+      derecha
+      tomarPapeloFlor
+      mover
+      LiberarEsquina(PosAv() + 1, PosCa())
+    sino
+      BloquearEsquina(PosAv(), PosCa() + 1)
+      mover
+      derecha
+      tomarPapeloFlor
+      mover
+      LiberarEsquina(PosAv() - 1, PosCa())
+    hacerLado(longitud - 1)
+    derecha
+  fin
+  proceso hacerCuadrado(E longitud: numero; E id: numero)
+  comenzar
+    si (id = 1)
+      hacerEsquinaPrivada(longitud)
+      hacerEsquinaCompartida(longitud, id)
+    sino
+      hacerEsquinaCompartida(longitud, id)
+      hacerEsquinaPrivada(longitud)
+  fin
+areas
+  areaFiscal : AreaP(1,1,1,1)
+  areaRobot1 : AreaP(2,2,2,2)
+  areaRobot2 : AreaP(3,3,3,3)
+  areaEtapa1 : AreaPC(5,7,13,15)
+  areaEtapa2 : AreaPC(15,7,23,15)
+  areaEtapa3 : AreaPC(25,7,33,15)
+
+robots
+  robot robotFiscal
+  variables
+    ok: boolean
+    id: numero
+  comenzar
+    EnviarMensaje(1,robotJuntador1)
+    EnviarMensaje(2,robotJuntador2)
+    repetir 2
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(ok,robotJuntador1)
+      sino
+        RecibirMensaje(ok,robotJuntador2)
+      Informar('Llego_primero_el_r',id)
+      {recepción de descarte}
+      RecibirMensaje(id,*)
+      RecibirMensaje(ok,*)
+      {envío de mensaje para que continuen}
+      EnviarMensaje(V,robotJuntador1)
+      EnviarMensaje(V,robotJuntador2)
+    {último cuadrado}  
+    RecibirMensaje(id,*)
+    si (id = 1)
+      RecibirMensaje(ok,robotJuntador1)
+    sino
+      RecibirMensaje(ok,robotJuntador2)
+    Informar('Llego_primero_el_r',id)
+    {recepción de descarte}
+    RecibirMensaje(id,*)
+    RecibirMensaje(ok,*)
+  fin
+  
+  robot robotJuntador
+  variables
+    id:numero
+    longitud:numero
+    ok:boolean
+  comenzar
+    longitud:=5
+    ok:= F
+    RecibirMensaje(id,robotFiscal)
+    si (id = 1)
+      Pos(5,11)
+    sino
+      Pos(9,7)
+      
+    repetir 2
+      hacerCuadrado(longitud,id)
+      EnviarMensaje(id,robotFiscal)
+      EnviarMensaje(V,robotFiscal)
+      RecibirMensaje(ok,robotFiscal)
+      Pos(PosAv+10,PosCa)
+    {una vez más sin esperar mensaje} 
+    hacerCuadrado(longitud,id)
+    EnviarMensaje(id,robotFiscal)
+    EnviarMensaje(V,robotFiscal)
+   
+  fin
+
+variables
+  robotFiscal : robotFiscal
+  robotJuntador1 : robotJuntador
+  robotJuntador2 : robotJuntador
+comenzar
+  AsignarArea(robotFiscal, areaFiscal)
+  AsignarArea(robotJuntador1, areaRobot1)
+  AsignarArea(robotJuntador2, areaRobot2)
+  
+  AsignarArea(robotJuntador1, areaEtapa1)
+  AsignarArea(robotJuntador2, areaEtapa1)
+  AsignarArea(robotJuntador1, areaEtapa2)
+  AsignarArea(robotJuntador2, areaEtapa2)
+  AsignarArea(robotJuntador1, areaEtapa3)
+  AsignarArea(robotJuntador2, areaEtapa3)
+  
+  Iniciar(robotFiscal,1,1)
+  Iniciar(robotJuntador1,2,2)
+  Iniciar(robotJuntador2,3,3)
+
+fin
+
+

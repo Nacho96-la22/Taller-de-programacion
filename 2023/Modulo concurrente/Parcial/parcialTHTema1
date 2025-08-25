@@ -1,0 +1,137 @@
+programa parcialTHTema1
+procesos
+  proceso maximo (E cant1:numero; E cant2:numero; E cant3:numero; ES max:numero)
+  comenzar
+    si (cant2 < cant1) & (cant3 < cant1)
+      max:= 1
+    sino
+      si (cant3 < cant2) & (cant1 < cant2)
+        max:= 2
+      sino
+        max:= 3
+  fin  
+  proceso recogerFlores(E f:numero)
+  comenzar
+    repetir f
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      si (HayFlorEnLaEsquina)
+        tomarFlor
+      Pos(100,100)
+      LiberarEsquina(50,50)
+  fin
+  proceso depositarAlPunto (E f:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:= PosAv
+    ca:= PosCa
+    repetir f     
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      si (HayFlorEnLaEsquina)
+        depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+  fin
+  proceso juntarF(ES f:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      f:= f+1
+  fin
+  proceso cuadrado(E paso:numero; ES f:numero)
+  comenzar 
+    repetir 4
+      repetir paso
+        juntarF(f)
+        mover
+      derecha
+  fin
+  proceso mandarTamanio
+  variables
+    paso:numero
+  comenzar
+    Random(paso,1,6)    
+    Informar('Primer_jugador_correra_los_pasos_',paso)
+    EnviarMensaje(paso,j1)
+    Random(paso,1,6)
+    Informar('Segundo_jugador_correra_los_pasos_',paso)
+    EnviarMensaje(paso,j2)
+    Random(paso,1,6)
+    Informar('Tercero_jugador_correra_los_pasos_',paso)
+    EnviarMensaje(paso,j3)
+  fin
+  proceso enviarIDs
+  comenzar
+    EnviarMensaje(1,j1)
+    EnviarMensaje(2,j2)
+    EnviarMensaje(3,j3)
+  fin
+areas
+  areaD: AreaPC(50,50,50,50)
+  areaJ1: AreaP(1,1,7,21)
+  areaJ2: AreaP(10,1,16,21)
+  areaJ3: AreaP(20,1,26,21)
+  areaF: AreaP(100,100,100,100)
+robots
+  robot recolectador
+  variables
+    id,paso,f:numero
+  comenzar
+    RecibirMensaje(id,rf)
+    RecibirMensaje(paso,rf)
+    repetir 2
+      cuadrado(paso,f)
+      Pos(PosAv,PosCa+paso+1)
+    cuadrado(paso,f)
+    depositarAlPunto(f)
+    EnviarMensaje(id,rf)
+    EnviarMensaje(f,rf)
+  fin
+  
+  robot fiscal
+  variables
+    f,id,cant1,cant2,cant3,max:numero
+  comenzar
+    cant1:= 0
+    cant2:= 0
+    cant3:= 0
+    enviarIDs
+    mandarTamanio
+    repetir 3
+      RecibirMensaje(id,*)
+      si (id = 1)
+        RecibirMensaje(f,j1)
+        recogerFlores(f)
+        cant1:= cant1 + f
+      sino
+        si (id = 2)
+          RecibirMensaje(f,j2)
+          recogerFlores(f)
+          cant2:= cant2 + f
+        sino
+          RecibirMensaje(f,j3)
+          recogerFlores(f)
+          cant3:= cant3 + f
+    maximo(cant1,cant2,cant3,max)
+    Informar('Recolecta_mas_flores_que_el_ganador_fue',max)  
+  fin
+variables
+  j1,j2,j3:recolectador
+  rf:fiscal
+comenzar
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,areaD)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,areaD)
+  AsignarArea(j3,areaJ3)
+  AsignarArea(j3,areaD)
+  AsignarArea(rf,areaF)
+  AsignarArea(rf,areaD)
+  
+  Iniciar(j1,1,1)
+  Iniciar(j2,10,1)
+  Iniciar(j3,20,1)
+  Iniciar(rf,100,100)
+fin

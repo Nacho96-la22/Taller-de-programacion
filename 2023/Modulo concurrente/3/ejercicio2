@@ -1,0 +1,125 @@
+programa ejercicio2
+procesos
+  proceso limpiarPapel(ES cant:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cant:= cant + 1
+  fin
+  proceso limpiarFlor(ES cant:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cant:= cant + 1
+  fin
+  proceso caminarAlto(E alto:numero)
+  comenzar
+    repetir (alto)
+      mover
+  fin
+  proceso escalonF(E alto:numero; ES cant:numero)
+  comenzar
+    {Aca tambien juntaria flor}
+    limpiarFlor(cant)
+    caminarAlto(alto)
+    derecha
+    limpiarFlor(cant)
+    caminarAlto(alto)  
+  fin
+  proceso giro
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+  proceso escalonP(E alto:numero; ES cant:numero)
+  comenzar
+    {lo mismo}
+    limpiarPapel(cant)
+    caminarAlto(alto)
+    repetir 3
+      derecha
+    limpiarPapel(cant)
+    caminarAlto(alto)
+  fin
+areas
+  ciudad: AreaP(1,1,100,100)
+robots
+  robot florero
+  variables
+    alto:numero
+    id:numero
+    cant:numero
+  comenzar
+    alto:= 5
+    RecibirMensaje(id, robotFiscal)
+    repetir 4
+      escalonF(alto, cant)
+      giro
+      alto:= alto - 1
+    BloquearEsquina(16,16)
+    escalonF(alto, cant)
+    giro
+    alto:= alto - 1
+    {alto del ultimo escalon}    
+    EnviarMensaje(id, robotFiscal)
+    giro
+    mover
+    LiberarEsquina(16,16)
+    alto:= 2
+    repetir 4
+      escalonF(alto, cant)
+      giro
+      alto:= alto + 1
+    Informar(cant)
+  fin
+  robot papelero
+  variables
+    alto:numero
+    id:numero
+    cant:numero
+  comenzar
+    alto:= 5
+    RecibirMensaje(id, robotFiscal)
+    repetir 4
+      escalonP(alto, cant)
+      derecha
+      alto:= alto - 1
+    BloquearEsquina(16,16)
+    escalonP(alto, cant)
+    derecha
+    alto:= alto - 1
+    EnviarMensaje(id, robotFiscal)
+    derecha
+    mover
+    LiberarEsquina(16,16)
+    alto:= 2
+    repetir 4
+      escalonP(alto, cant)
+      derecha
+      alto:= alto + 1
+    Informar(cant)
+  fin
+  robot jefe
+  variables
+    ganador, perdedor:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    RecibirMensaje(ganador,*)
+    Informar('Llego_primero ', ganador)
+    RecibirMensaje(perdedor,*)
+    Informar('Llego_segundo ', perdedor)
+  fin
+variables
+  robot1:florero
+  robot2:papelero
+  robotFiscal:jefe
+comenzar
+  AsignarArea(robot1, ciudad)
+  AsignarArea(robot2, ciudad)
+  AsignarArea(robotFiscal, ciudad)
+  Iniciar(robot1, 1,1)
+  Iniciar(robot2, 31,1)
+  Iniciar(robotFiscal, 15,1)
+fin

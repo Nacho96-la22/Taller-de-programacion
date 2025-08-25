@@ -1,0 +1,117 @@
+{2. Productores y consumidores
+ Existen dos robots productores que recorren las avenidas 5 y 10 respectivamente,
+ juntando todos los papeles de su avenida. A lo largo del recorrido, cada vez que
+ juntan 5 papeles, los depositan en la esquina (50,50).
+ AdemÃ¡s existen dos robots consumidores que intentan tomar una cantidad aleatoria de
+ papeles (entre 2 y 5) de la esquina (50,50) para depositarla en su esquina de origen.
+ Si la esquina (50,50) no posee la cantidad de papeles requerida, vuelven a su esquina
+ de origen sin tomar ningÃºn papel. Si luego de 8 intentos seguidos detectan que la
+ esquina (50,50) no tiene papeles suficientes para juntar, entonces asumirÃ¡n que los
+ productores ya han completado su trabajo y por lo tanto terminarán su tarea tambien.
+ 
+ Los consumidores inician en las esquinas (11,1) y (12,1) respectivamente.}
+
+programa ejercicio2
+procesos
+  proceso preguntaPorCumple(ES cantPapel:numero; E cant:numero; ES intento:numero)
+  comenzar
+    si(cantPapel < cant)
+      repetir cantPapel
+        depositarPapel
+      intento:= intento + 1
+  fin
+  proceso consumidorJuntarPapel(ES cantPapel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapel:= cantPapel + 1
+  fin
+  proceso preguntaPorCamino(ES ok:boolean)
+  comenzar
+    si(PosCa = 100)
+      ok:= V
+    sino
+      mover
+  fin
+  proceso depositoPapel(ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+      p:= p - 1
+  fin
+  proceso depositoAlPunto(ES p:numero)
+  variables 
+    ca,av:numero
+  comenzar
+    ca:= PosCa
+    av:= PosAv
+    BloquearEsquina(50,50)
+    Pos(50,50) 
+    depositoPapel(p)
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+  proceso trabajarPorPapel(ES p:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      p:= p + 1
+      si(p = 5)
+        depositoAlPunto(p)        
+  fin  
+areas
+  avenidaP1: AreaP(5,1,5,100)
+  avenidaP2: AreaP(10,1,10,100)
+  punto: AreaC (50,50,50,50)
+  avenidaC1: AreaP(11,1,11,1)
+  avenidaC2: AreaP(12,1,12,1)
+robots
+  robot consumidor
+  variables
+    intento,cant,av,ca,cantPapel:numero
+  comenzar
+    intento:= 0
+    av:= PosAv
+    ca:= PosCa
+    mientras(intento < 8)
+      Random(cant,2,5)
+      cantPapel:= 0
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      consumidorJuntarPapel(cantPapel)
+      preguntaPorCumple(cantPapel,cant,intento)
+      Pos(av,ca)
+      LiberarEsquina(50,50)
+      mientras(HayPapelEnLaBolsa)
+        depositarPapel
+  fin
+  robot productor
+  variables
+    ok:boolean
+    p:numero
+  comenzar
+    ok:= F
+    p:= 0
+    mientras (~ok) 
+      trabajarPorPapel(p)
+      preguntaPorCamino(ok)
+  fin
+variables
+  p1: productor
+  p2: productor
+  c1: consumidor
+  c2: consumidor
+comenzar
+  AsignarArea(p1, punto)
+  AsignarArea(p1, avenidaP1)
+  AsignarArea(p2, punto)
+  AsignarArea(p2, avenidaP2)
+  AsignarArea(c1, punto)
+  AsignarArea(c1, avenidaC1)
+  AsignarArea(c2, punto)
+  AsignarArea(c2, avenidaC2)
+  Iniciar(p1, 5,1)
+  Iniciar(p2, 10,1)
+  Iniciar(c1, 11,1)
+  Iniciar(c2, 12,1)  
+fin
